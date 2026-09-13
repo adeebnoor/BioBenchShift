@@ -1,0 +1,53 @@
+name: science-expansion-biogrid-named-cases
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - science-expansion-20260913
+    paths:
+      - 'analysis/extract_named_biogrid_later_cases.py'
+      - 'protocols/BIOGRID_NAMED_LATER_CASES_AMENDMENT_20260913.md'
+      - '.github/workflows/science_expansion_biogrid_named_cases.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  named-cases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scipy scikit-learn
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Download frozen BioGRID snapshots
+        run: |
+          mkdir -p external_data results/science_expansion
+          curl -fL --retry 4 --retry-delay 2 https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.250/BIOGRID-MV-Physical-5.0.250.tab3.zip -o external_data/BIOGRID-MV-Physical-5.0.250.tab3.zip
+          curl -fL --retry 4 --retry-delay 2 https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.261/BIOGRID-MV-Physical-5.0.261.tab3.zip -o external_data/BIOGRID-MV-Physical-5.0.261.tab3.zip
+          sha256sum external_data/BIOGRID-MV-Physical-5.0.250.tab3.zip external_data/BIOGRID-MV-Physical-5.0.261.tab3.zip > results/science_expansion/biogrid_named_cases_inputs.sha256
+      - name: Extract mechanical named case set
+        run: |
+          python analysis/extract_named_biogrid_later_cases.py \
+            --old external_data/BIOGRID-MV-Physical-5.0.250.tab3.zip \
+            --new external_data/BIOGRID-MV-Physical-5.0.261.tab3.zip \
+            --out-prefix results/science_expansion/biogrid_named_later_cases
+          cat results/science_expansion/biogrid_named_later_cases.md
+      - name: Upload immutable result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-biogrid-named-cases-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            results/science_expansion/biogrid_named_later_cases*
+            results/science_expansion/biogrid_named_cases_inputs.sha256
