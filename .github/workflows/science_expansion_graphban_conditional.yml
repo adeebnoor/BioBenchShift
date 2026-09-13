@@ -1,0 +1,121 @@
+name: science-expansion-graphban-conditional
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [science-expansion-20260913]
+    paths:
+      - 'conditional_graphban_h5_chembl.trigger'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  conditional-h5-chembl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen analysis environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1 pandas scipy scikit-learn requests
+      - name: Download frozen feature artifacts from S6 verification run
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 34747733830
+          pattern: protein-*
+          path: feature_artifacts/protein
+          merge-multiple: true
+      - name: Download frozen drug features from S6 verification run
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 34747733830
+          name: drug-features
+          path: feature_artifacts/drug
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p external_data feature_artifacts/combined results/science_expansion
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz \
+            results/graphban_targetdecagon_mapping_drug_map.csv \
+            results/graphban_targetdecagon_mapping_gene_map.csv \
+            > results/science_expansion/conditional_graphban_inputs.sha256
+      - name: Combine canonical protein features
+        run: |
+          N=$(python - <<'PY'
+          import pandas as pd
+          x=pd.read_csv('results/graphban_targetdecagon_mapping_gene_map.csv',dtype=str).fillna('')
+          x=x[x.sequence.astype(bool)].drop_duplicates('gene')
+          print(len(x))
+          PY
+          )
+          python analysis/combine_graphban_features.py \
+            --chunks feature_artifacts/protein/protein_chunk_*.npz \
+            --n-rows "$N" \
+            --out feature_artifacts/combined/protein_features.npy
+          sha256sum feature_artifacts/drug/drug_features.npy \
+            feature_artifacts/combined/protein_features.npy \
+            >> results/science_expansion/conditional_graphban_inputs.sha256
+      - name: Run frozen conditional H5 common-universe analysis
+        env:
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python analysis/run_graphban_conditional_h5.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --drug-features feature_artifacts/drug/drug_features.npy \
+            --protein-features feature_artifacts/combined/protein_features.npy \
+            --out-prefix results/science_expansion/graphban_conditional_h5 \
+            --comparator-inits 5
+          cat results/science_expansion/graphban_conditional_h5.md
+      - name: Upload immutable conditional H5 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-graphban-conditional-h5-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            results/science_expansion/conditional_graphban_inputs.sha256
+            results/science_expansion/graphban_conditional_h5*
+      - name: Run frozen conditional ChEMBL 37 common-universe validation
+        run: |
+          python analysis/run_graphban_conditional_chembl.py \
+            --biosnap external_data/ChG-TargetDecagon_targets.csv.gz \
+            --scores results/science_expansion/graphban_conditional_h5_scores.npz \
+            --out-prefix results/science_expansion/graphban_conditional_chembl
+          cat results/science_expansion/graphban_conditional_chembl.md
+      - name: Preserve execution environment
+        if: always()
+        run: |
+          {
+            echo "branch=science-expansion-20260913"
+            echo "baseline_commit=1298e4c83ff4fa488a784d52219d20e706118a9e"
+            echo "source_s6_run=34747733830"
+            python --version
+            pip freeze
+          } > results/science_expansion/graphban_conditional_environment.txt
+      - name: Upload immutable conditional ChEMBL artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-graphban-conditional-chembl-${{ github.sha }}
+          if-no-files-found: warn
+          retention-days: 90
+          path: |
+            results/science_expansion/graphban_conditional_chembl*
+            results/science_expansion/graphban_conditional_environment.txt
