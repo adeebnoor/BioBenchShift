@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Local caches and downloaded third-party data
+.cache/
+cache/
+data_raw/
+downloads/
+*.pt
+*.pth
+*.ckpt
+
+# Local submission/editorial materials
+submission_private/
+*.tmp
+~$*.docx
+
+# Logs
+*.log
