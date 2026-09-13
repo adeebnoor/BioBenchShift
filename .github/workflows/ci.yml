@@ -24,6 +24,9 @@ jobs:
       - name: Syntax-check analysis code
         run: python -m compileall -q analysis
 
+      - name: Validate source-data provenance links
+        run: python analysis/validate_source_data_links.py
+
       - name: Rebuild main figures from frozen source data
         run: python analysis/build_science_figures.py
 
