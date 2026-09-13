@@ -28,7 +28,7 @@ For each seed, score every mapped drug–gene pair not present in the frozen pos
 
 ## 3. Identical candidate universe for H5
 
-H5 comparisons are restricted to the exact GraphBAN-mappable unknown universe: mapped drugs × mapped genes minus all frozen known positive TargetDecagon edges. Comparator models (NeuralMF, SVD and LightGCN) are fitted/ranked using their already-frozen full-graph ensemble definitions, but their score matrices are restricted to this identical candidate universe before Top-K extraction.
+H5 comparisons are restricted to the exact GraphBAN-mappable unknown universe: all 284 mapped drugs × the 3,607 sequence-mapped genes, minus all frozen known positive TargetDecagon edges inside that universe. Comparator models (NeuralMF, SVD and LightGCN) are fitted/ranked using their already-frozen full-graph ensemble definitions, but their score matrices are restricted to this identical candidate universe before Top-K extraction.
 
 Primary K values are unchanged: `100, 500, 1000`.
 
@@ -36,7 +36,7 @@ For GraphBAN-style versus each comparator, report without selection:
 
 1. Top-K hypothesis turnover `1 - |A∩B|/K`;
 2. Jaccard overlap;
-3. Spearman correlation of full candidate-universe scores (equivalently rank correlation because Spearman is computed over scores);
+3. Spearman correlation of full candidate-universe scores;
 4. the number of shared Top-K pairs.
 
 The comparison to the previously selected NeuralMF and SVD queues is primary for continuity; LightGCN is retained as a prespecified secondary comparator. No comparator may be dropped after results are known.
@@ -49,7 +49,7 @@ A cross-model queue difference is interpreted as model/benchmark consequential o
 
 ## 5. ChEMBL 37 conditional external validation
 
-Use the unchanged protocol and evidence definitions from `EXTERNAL_DTI_CHEMBL_PROTOCOL.md` / `analysis/run_chembl_dti_external.py`:
+Use the unchanged evidence definitions from `EXTERNAL_DTI_CHEMBL_PROTOCOL.md` / `analysis/run_chembl_dti_external.py`:
 
 - ChEMBL database version must equal `ChEMBL_37`;
 - human `SINGLE PROTEIN` targets only;
@@ -77,7 +77,19 @@ Before any GraphBAN hit count is interpreted, the live ChEMBL mapping/evidence r
 
 If any fingerprint count differs, the conditional ChEMBL run must stop and report snapshot drift. It must not substitute the new counts or continue to a favorable result.
 
-For a matching fingerprint, add `GraphBAN-style` to the existing full-universe primary table and mapped-universe table using exactly the same evidence sets and K values. The existing NeuralMF/SVD/LightGCN rows remain unchanged and are not recomputed for narrative convenience.
+### Common-universe correction locked before outcome
+
+The frozen GraphBAN mapping covers all 284 drugs but 3,607/3,648 genes (98.876%). It is therefore impossible to assign scientifically valid GraphBAN scores to the 41 unmapped genes. No imputation or artificial floor score is permitted.
+
+Accordingly:
+
+1. the original frozen H6 ChEMBL tables for NeuralMF/SVD/LightGCN remain unchanged and remain the historical primary analysis;
+2. the conditional four-model comparison uses a **common GraphBAN-mappable universe** for all models: 284 drugs × 3,607 GraphBAN-mapped genes minus known positives;
+3. a second conditional mapped-only table intersects that common GraphBAN universe with the unchanged ChEMBL-mapped drug/gene subset;
+4. NeuralMF, SVD and LightGCN are re-ranked on these common universes solely to ensure identical eligibility with GraphBAN-style; their original H6 results are not overwritten;
+5. all K values and ChEMBL evidence definitions remain unchanged.
+
+This correction is a candidate-universe fairness rule, not an outcome-driven modification, and is frozen before any GraphBAN H5/ChEMBL ranking result is generated.
 
 ## 6. Interpretation lock
 
