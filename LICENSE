@@ -1,26 +1,25 @@
-Anti-DDI v2 — licensing
-=======================
+BioBenchShift — licensing
+=========================
 
-This release is dual-licensed. The split is by file type, and it is deliberate:
-the software should be reusable with minimal friction, and the data should be
-reusable with attribution so that the negative claims remain traceable to their
-provenance and their stated limitations.
+BioBenchShift separates licensing for original software from licensing for
+original documentation and generated research outputs. Third-party source data
+remain governed by their original providers and are not relicensed here.
 
 -------------------------------------------------------------------------------
-CODE — MIT License
+ORIGINAL SOFTWARE — MIT License
 -------------------------------------------------------------------------------
-Applies to: antiddi/ (all Python modules), validate.py, pyproject.toml,
-CITATION.cff, .github/workflows/ci.yml, and any other software or
-configuration file in this release.
+Applies to original source code, analysis scripts, workflow/configuration files,
+and software documentation created specifically for BioBenchShift, except where
+a file explicitly states a different license or contains third-party code.
 
-Copyright (c) 2026 Abdullah Assiri and Adeeb Noor
+Copyright (c) 2026 Adeeb Noor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
@@ -34,56 +33,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -------------------------------------------------------------------------------
-DATA AND DOCUMENTATION — Creative Commons Attribution 4.0 International
-(CC-BY-4.0)
+ORIGINAL DOCUMENTATION AND GENERATED RESEARCH OUTPUTS — CC BY 4.0
 -------------------------------------------------------------------------------
-Applies to: data/ (all CSV and Markdown files), figures/ (all image files),
-README.md, and the accompanying disclosure and deposit documents.
+Unless a file states otherwise, original Markdown documentation, figure source
+data produced by the study, generated figures, and frozen summary/result tables
+created by BioBenchShift are licensed under the Creative Commons Attribution
+4.0 International License (CC BY 4.0).
 
-Copyright (c) 2026 Abdullah Assiri and Adeeb Noor
-
-These materials are licensed under the Creative Commons Attribution 4.0
-International License. You are free to share and adapt them for any purpose,
-including commercially, provided you give appropriate credit, provide a link to
-the license, and indicate if changes were made.
-
-Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
-Human-readable summary: https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/
 
 Suggested attribution:
 
-  Assiri A, Noor A. Anti-DDI v2: a tiered negative-control resource for
-  drug-drug interaction research (Version 2.0.0) [Data set]. Zenodo.
-  doi:[AUTHOR: Zenodo DOI]. Licensed under CC-BY-4.0.
+  Noor A. BioBenchShift: Benchmark design redirects biomedical discovery.
+  GitHub repository/release, 2026. Cite the exact archived release or commit.
 
 -------------------------------------------------------------------------------
-THIRD-PARTY MATERIAL
+THIRD-PARTY DATA, IDENTIFIERS, MODELS AND CODE
 -------------------------------------------------------------------------------
-The data files contain identifiers and derived counts drawn from external
-sources, which remain subject to their own terms:
+BioBenchShift analyses reference public or externally maintained resources such
+as BioSNAP/TargetDecagon, HuRI, Hetionet, BioGRID, ChEMBL, UniProt, PubChem,
+and third-party model architectures/checkpoints. Those materials remain subject
+to the licenses, terms, and citation requirements of their original providers.
+This repository does not grant additional rights to third-party content.
 
-  - Adverse-event report counts are derived from the openFDA FAERS API, a
-    public data service of the United States Food and Drug Administration.
-  - RxNorm concept identifiers (rxcui_a, rxcui_b) originate from the U.S.
-    National Library of Medicine.
-  - ATC codes (atc_a, atc_b) are used for classification; ATC is maintained by
-    the WHO Collaborating Centre for Drug Statistics Methodology.
-  - DrugBank identifiers (drugbank_a, drugbank_b) are cross-references to
-    DrugBank, which applies its own licence to its content. Only the accession
-    strings are reproduced here.
-  - ChEMBL identifiers (chembl_a, chembl_b) are cross-references to ChEMBL
-    (EMBL-EBI).
-
-No third-party database content is redistributed beyond the identifier strings
-and the aggregate counts described in data/DATA_DICTIONARY.md.
+Where practical, BioBenchShift records release identifiers, source locations,
+checksums, and deterministic retrieval/processing logic rather than republishing
+third-party datasets. See DATA_PROVENANCE.md and protocols/BENCHMARK_MANIFEST.md.
 
 -------------------------------------------------------------------------------
-NO CLINICAL WARRANTY
+RESEARCH-USE BOUNDARY
 -------------------------------------------------------------------------------
-This release is an evaluation and benchmarking resource. It does not license
-the co-prescription of any drug pair and is not a source of clinical
-drug-interaction information. Nothing in it substitutes for the judgement of a
-qualified healthcare professional with access to the full patient context and a
-current, maintained drug-information source. The licences above grant rights to
-use and redistribute these materials; they grant no warranty of clinical
-fitness of any kind.
+BioBenchShift is a research reproducibility package. Its outputs are not medical
+advice, are not clinical safety determinations, and do not authorize treatment,
+prescribing, diagnostic, or experimental decisions without independent domain-
+appropriate validation.
