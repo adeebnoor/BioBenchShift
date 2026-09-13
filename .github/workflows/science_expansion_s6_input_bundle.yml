@@ -1,0 +1,37 @@
+name: science-expansion-s6-input-bundle
+
+on:
+  push:
+    branches: [science-expansion-20260913]
+    paths:
+      - '.github/workflows/science_expansion_s6_input_bundle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p s6_bundle
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o s6_bundle/ChG-TargetDecagon_targets.csv.gz
+          sha256sum s6_bundle/ChG-TargetDecagon_targets.csv.gz > s6_bundle/INPUT.sha256
+          cp results/graphban_targetdecagon_mapping_drug_map.csv s6_bundle/
+          cp results/graphban_targetdecagon_mapping_gene_map.csv s6_bundle/
+          cp analysis/run_graphban_targetdecagon_precomputed.py s6_bundle/
+          cp analysis/run_graphban_targetdecagon_clean.py s6_bundle/
+          cp analysis/combine_graphban_features.py s6_bundle/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-s6-input-bundle-${{ github.sha }}
+          path: s6_bundle/
+          if-no-files-found: error
+          retention-days: 90
