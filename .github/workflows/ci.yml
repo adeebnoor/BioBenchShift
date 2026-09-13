@@ -16,10 +16,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install lightweight verification dependencies
+      - name: Install core reproducibility dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install numpy pandas scipy scikit-learn matplotlib
+          pip install -r requirements.txt
 
       - name: Syntax-check analysis code
         run: python -m compileall -q analysis
@@ -27,26 +27,39 @@ jobs:
       - name: Rebuild main figures from frozen source data
         run: python analysis/build_science_figures.py
 
-      - name: Verify paper-facing assets
+      - name: Verify public reproducibility assets
         run: |
-          test -s paper/manuscript.md
-          test -s paper/supplementary_materials.md
-          test -s paper/cover_letter.md
-          test -s paper/cts_metadata.md
+          test -s README.md
+          test -s PAPER.md
+          test -s REPRODUCIBILITY.md
+          test -s DATA_PROVENANCE.md
+          test -s CITATION.cff
+          test -s LICENSE
           test -s figures/source_data_main.csv
           test -s figures/generated/Figure1_structural_observability.png
           test -s figures/generated/Figure2_hypothesis_identity.png
           test -s figures/generated/Figure3_biogrid_future_evidence.png
           test -s figures/generated/Figure4_chembl_frontier.png
+          test -s results/GATE1_SUMMARY.md
+          test -s results/h4b_biogrid_future_yield_summary.json
+          test -s results/h6_chembl_dti_external_summary.json
+          test -s protocols/CHECKSUMS.sha256
           test -s protocols/SCIENCE_PROJECT.md
           test -s protocols/RESULTS_CHECKPOINT_20260913.md
-          test -s CITATION.cff
 
-      - name: Guard against accidental legacy-repository primary links
+      - name: Guard against private submission assets in public repository
         run: |
-          if grep -RIl --exclude='related_work_disclosure.md' --exclude-dir='legacy_workflows' \
+          test ! -e paper/cover_letter.md
+          test ! -e paper/cts_metadata.md
+          test ! -e paper/reviewer_candidates.md
+          test ! -e paper/manuscript.md
+          test ! -e paper/supplementary_materials.md
+
+      - name: Guard against stale legacy Science-branch links
+        run: |
+          if grep -RIl --exclude-dir='.git' \
               'github.com/adeebnoor/ANTI-DDI/tree/science-structural-shortcuts' \
-              paper protocols analysis results; then
+              README.md PAPER.md REPRODUCIBILITY.md DATA_PROVENANCE.md protocols analysis results 2>/dev/null; then
             echo 'Found stale legacy Science-branch URL.'
             exit 1
           fi
