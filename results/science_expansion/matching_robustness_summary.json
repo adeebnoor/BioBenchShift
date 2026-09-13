@@ -1,36 +1,81 @@
 {
   "protocol": "MATCHING_ROBUSTNESS_AMENDMENT_20260913.md",
   "baseline_commit": "1298e4c83ff4fa488a784d52219d20e706118a9e",
-  "seeds": [0,1,2,3,4,5,6,7,8,9],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
   "methods": {
     "log2_bins": {
       "matching_coverage_mean": 0.5988647621056395,
       "winner_change_fraction": 0.7,
-      "neutralized_winner_counts": {"SVD": 7, "NeuralMF": 3},
+      "neutralized_winner_counts": {
+        "SVD": 7,
+        "NeuralMF": 3
+      },
       "mean_auc": {
-        "SVD": {"conventional": 0.9507791411357192, "neutralized": 0.915055698118063},
-        "NeuralMF": {"conventional": 0.9969062148072266, "neutralized": 0.9093308252175992},
-        "LightGCN": {"conventional": 0.9889226805317322, "neutralized": 0.8851015036412722}
+        "SVD": {
+          "conventional": 0.9507791516033073,
+          "neutralized": 0.915055698118063
+        },
+        "NeuralMF": {
+          "conventional": 0.9969062148072266,
+          "neutralized": 0.9093308252175992
+        },
+        "LightGCN": {
+          "conventional": 0.9889226805317317,
+          "neutralized": 0.8851015036412722
+        }
       }
     },
     "degree_deciles": {
       "matching_coverage_mean": 1.0,
       "winner_change_fraction": 0.0,
-      "neutralized_winner_counts": {"NeuralMF": 10},
+      "neutralized_winner_counts": {
+        "NeuralMF": 10
+      },
       "mean_auc": {
-        "SVD": {"conventional": 0.9507791411357192, "neutralized": 0.9405291516876438},
-        "NeuralMF": {"conventional": 0.9969062148072266, "neutralized": 0.979019777478294},
-        "LightGCN": {"conventional": 0.9889226805317322, "neutralized": 0.9704542994804004}
+        "SVD": {
+          "conventional": 0.9507791516033073,
+          "neutralized": 0.9405291516876441
+        },
+        "NeuralMF": {
+          "conventional": 0.9969062148072266,
+          "neutralized": 0.979019777478294
+        },
+        "LightGCN": {
+          "conventional": 0.9889226805317317,
+          "neutralized": 0.9704542892075535
+        }
       }
     },
     "nearest_caliper": {
       "matching_coverage_mean": 0.48475438986558367,
       "winner_change_fraction": 0.0,
-      "neutralized_winner_counts": {"NeuralMF": 10},
+      "neutralized_winner_counts": {
+        "NeuralMF": 10
+      },
       "mean_auc": {
-        "SVD": {"conventional": 0.9507791411357192, "neutralized": 0.9045578313051783},
-        "NeuralMF": {"conventional": 0.9969062148072266, "neutralized": 0.9322811077139834},
-        "LightGCN": {"conventional": 0.9889226805317322, "neutralized": 0.9145452208024574}
+        "SVD": {
+          "conventional": 0.9507791516033073,
+          "neutralized": 0.9045584507071112
+        },
+        "NeuralMF": {
+          "conventional": 0.9969062148072266,
+          "neutralized": 0.9322811077139834
+        },
+        "LightGCN": {
+          "conventional": 0.9889226805317317,
+          "neutralized": 0.9145452208024574
+        }
       }
     }
   }
