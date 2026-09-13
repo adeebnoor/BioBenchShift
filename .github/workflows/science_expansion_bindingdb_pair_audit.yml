@@ -1,0 +1,55 @@
+name: science-expansion-bindingdb-pair-audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - science-expansion-20260913
+    paths:
+      - 'analysis/audit_bindingdb_supported_pairs.py'
+      - '.github/workflows/science_expansion_bindingdb_pair_audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pair-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Download frozen public inputs
+        run: |
+          mkdir -p data/science_expansion/bindingdb results/science_expansion
+          wget --retry-connrefused --waitretry=2 --read-timeout=60 --timeout=60 --tries=5 \
+            -O data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz
+          wget --retry-connrefused --waitretry=2 --read-timeout=120 --timeout=120 --tries=5 \
+            -O data/science_expansion/BindingDB_BindingDB_Articles_202609_tsv.zip \
+            https://www.bindingdb.org/rwd/bind/downloads/BindingDB_BindingDB_Articles_202609_tsv.zip
+          unzip -o data/science_expansion/BindingDB_BindingDB_Articles_202609_tsv.zip -d data/science_expansion/bindingdb
+      - name: Enumerate all supported pairs and model ranks
+        run: |
+          BDB_TSV=$(find data/science_expansion/bindingdb -type f -name '*.tsv' | head -n 1)
+          python analysis/audit_bindingdb_supported_pairs.py \
+            --biosnap data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            --bindingdb "$BDB_TSV" \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --out results/science_expansion/bindingdb_external_all_supported_pairs.csv \
+            --inits 5
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-bindingdb-pair-audit-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: results/science_expansion/bindingdb_external_all_supported_pairs.csv
