@@ -1,0 +1,14 @@
+{
+  "benchmark": "Hetionet Compound-treats-Disease (CtD)",
+  "edge_count": 755,
+  "replicates": 3,
+  "lightgcn_auc_random_mean": 0.9017054962150363,
+  "lightgcn_auc_random_sd": 0.004703996524474731,
+  "lightgcn_auc_matched_mean": 0.8815082032281271,
+  "lightgcn_auc_matched_sd": 0.015284981463138907,
+  "lightgcn_drop_mean": 0.0201972929869092,
+  "lightgcn_drop_sd": 0.019473955930636205,
+  "match_fraction_mean": 1.0,
+  "seen_fraction_mean": 0.6357615894039735,
+  "model": "2-layer LightGCN-style message passing, embeddings trained with random unlabelled negatives"
+}

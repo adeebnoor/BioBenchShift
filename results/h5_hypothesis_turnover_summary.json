@@ -1,0 +1,60 @@
+{
+  "DTI": {
+    "replicates": 5,
+    "random_winner": "NeuralMF",
+    "neutral_winner": "SVD",
+    "candidate_count_mean": 817292.0,
+    "spearman_mean": 0.09104610371254888,
+    "spearman_sd": 0.011318891467238084,
+    "ht100_mean": 1.0,
+    "ht100_sd": 0.0,
+    "ht100_bootstrap95": [
+      1.0,
+      1.0
+    ],
+    "jaccard100_mean": 0.0,
+    "ht500_mean": 0.9996,
+    "ht500_sd": 0.0008944271909999167,
+    "ht500_bootstrap95": [
+      0.9987999999999999,
+      1.0
+    ],
+    "jaccard500_mean": 0.0002002002002002002,
+    "ht1000_mean": 0.9405999999999999,
+    "ht1000_sd": 0.011653325705565739,
+    "ht1000_bootstrap95": [
+      0.9304,
+      0.9485999999999999
+    ],
+    "jaccard1000_mean": 0.030638951546259324
+  },
+  "Disease-Gene": {
+    "replicates": 5,
+    "random_winner": "NeuralMF",
+    "neutral_winner": "LightGCN",
+    "candidate_count_mean": 614361.4,
+    "spearman_mean": 0.25814769096118845,
+    "spearman_sd": 0.016132477411289745,
+    "ht100_mean": 0.942,
+    "ht100_sd": 0.02387467277262663,
+    "ht100_bootstrap95": [
+      0.924,
+      0.96
+    ],
+    "jaccard100_mean": 0.02999085472255452,
+    "ht500_mean": 0.8987999999999999,
+    "ht500_sd": 0.023562682360037043,
+    "ht500_bootstrap95": [
+      0.8796000000000002,
+      0.9168000000000001
+    ],
+    "jaccard500_mean": 0.05342689539777233,
+    "ht1000_mean": 0.876,
+    "ht1000_sd": 0.021563858652847843,
+    "ht1000_bootstrap95": [
+      0.8587999999999999,
+      0.8917999999999999
+    ],
+    "jaccard1000_mean": 0.06621147307749393
+  }
+}

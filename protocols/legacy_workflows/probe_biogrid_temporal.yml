@@ -1,0 +1,62 @@
+name: probe-biogrid-temporal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/probe_biogrid_temporal.yml
+      - biogrid_probe.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - name: Probe BioGRID archive download patterns
+        run: |
+          set -u
+          mkdir -p results external_data
+          : > results/biogrid_temporal_probe.txt
+          for V in 5.0.250 5.0.261; do
+            F="BIOGRID-MV-Physical-${V}.tab3.zip"
+            URLS=(
+              "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-${V}/${F}"
+              "https://downloads.thebiogrid.org/File/BioGRID/Release-Archive/BIOGRID-${V}/${F}?download=1"
+              "https://downloads.thebiogrid.org/File/BioGRID/Release-Archive/BIOGRID-${V}/${F}"
+            )
+            ok=0
+            for U in "${URLS[@]}"; do
+              echo "TRY $U" | tee -a results/biogrid_temporal_probe.txt
+              rm -f "external_data/${F}"
+              if curl -fL --retry 2 --retry-delay 1 "$U" -o "external_data/${F}"; then
+                SZ=$(stat -c%s "external_data/${F}")
+                FT=$(file -b "external_data/${F}")
+                echo "SIZE=$SZ TYPE=$FT" | tee -a results/biogrid_temporal_probe.txt
+                if [ "$SZ" -gt 1000000 ] && unzip -t "external_data/${F}" >/dev/null 2>&1; then
+                  echo "SUCCESS $V $U" | tee -a results/biogrid_temporal_probe.txt
+                  sha256sum "external_data/${F}" | tee -a results/biogrid_temporal_probe.txt
+                  ok=1
+                  break
+                fi
+              fi
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "FAILED $V" | tee -a results/biogrid_temporal_probe.txt
+              exit 1
+            fi
+          done
+          cat results/biogrid_temporal_probe.txt
+      - name: Commit probe result
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/biogrid_temporal_probe.txt
+          git commit -m 'Record BioGRID temporal archive probe [skip ci]' || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main

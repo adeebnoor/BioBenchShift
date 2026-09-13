@@ -1,0 +1,96 @@
+name: graphban-biosnap-seed12-audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - GRAPHBAN_AUDIT_PROTOCOL.md
+      - analysis/audit_graphban_biosnap.py
+      - .github/workflows/graphban_biosnap_seed12.yml
+      - graphban_seed12.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  graphban-audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      TOKENIZERS_PARALLELISM: 'false'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install CPU inference dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install torch-geometric==2.6.1 torchmetrics==1.6.0 fair-esm==2.0.0 transformers==4.47.0 pandas==2.2.2 numpy==1.26.4 scikit-learn==1.6.0 tqdm==4.67.1
+
+      - name: Pin upstream GraphBAN
+        run: |
+          git clone https://github.com/HamidHadipour/GraphBAN.git graphban
+          cd graphban
+          git checkout 2dded31a46edfb18d685fb1bb361a95e99eaae49
+          echo '2dded31a46edfb18d685fb1bb361a95e99eaae49 HamidHadipour/GraphBAN' > ../results/graphban_upstream_commit.txt
+
+      - name: Apply portability-only patches
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('graphban/transductive_mode/predict_transductive.py')
+          s=p.read_text()
+          s=s.replace('model.load_state_dict(torch.load(args.trained_model))', "model.load_state_dict(torch.load(args.trained_model, map_location=device))")
+          marker="print('ESM feature extraction: pass')\nfrom transformers"
+          repl="print('ESM feature extraction: pass')\nimport gc\ndel esm_model\ngc.collect()\nif torch.cuda.is_available(): torch.cuda.empty_cache()\nfrom transformers"
+          if marker not in s:
+              raise SystemExit('Expected ESM marker not found in pinned GraphBAN script')
+          s=s.replace(marker,repl)
+          p.write_text(s)
+          PY
+
+      - name: Run published GraphBAN checkpoint on official BioSNAP seed12 test set
+        run: |
+          mkdir -p scratch/graphban results
+          python graphban/transductive_mode/predict_transductive.py \
+            --test_path graphban/Data/biosnap/transductive/seed12/test_biosnap12.csv \
+            --seed 12 \
+            --trained_model graphban/transductive_mode/trained_models/biosnap/biosnap_trans_12.pth \
+            --metric_path scratch/graphban/seed12_metric.csv \
+            --pred_probs_path scratch/graphban/seed12_pred.csv
+          cat scratch/graphban/seed12_metric.csv
+
+      - name: Audit conventional versus degree-matched evaluation
+        run: |
+          python analysis/audit_graphban_biosnap.py \
+            --train graphban/Data/biosnap/transductive/seed12/train_biosnap12.csv \
+            --test graphban/Data/biosnap/transductive/seed12/test_biosnap12.csv \
+            --pred scratch/graphban/seed12_pred.csv \
+            --seed-label 12 \
+            --match-reps 100 \
+            --out-prefix results/graphban_biosnap_seed12
+          cat results/graphban_biosnap_seed12.md
+
+      - name: Commit frozen audit outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add results/graphban_upstream_commit.txt results/graphban_biosnap_seed12*
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record GraphBAN BioSNAP seed12 structural audit [skip ci]'
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main || { git rebase --abort || true; exit 1; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 3
+          done
+          exit 1

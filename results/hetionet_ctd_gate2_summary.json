@@ -1,0 +1,20 @@
+{
+  "benchmark": "Hetionet Compound-treats-Disease (CtD)",
+  "metaedge": "CtD",
+  "edge_count": 755,
+  "replicates": 5,
+  "match_fraction_mean": 1.0,
+  "seen_fraction_mean": 0.6013245033112582,
+  "svd_auc_random_mean": 0.7172591344124805,
+  "svd_auc_random_sd": 0.03098289906691805,
+  "svd_auc_matched_mean": 0.7053116660250489,
+  "svd_auc_matched_sd": 0.037788971832599105,
+  "svd_drop_mean": 0.011947468387431659,
+  "svd_drop_sd": 0.011771779983773177,
+  "neuralmf_auc_random_mean": 0.878678869674749,
+  "neuralmf_auc_random_sd": 0.018836786330619606,
+  "neuralmf_auc_matched_mean": 0.5600248740624918,
+  "neuralmf_auc_matched_sd": 0.013817340993516315,
+  "neuralmf_drop_mean": 0.31865399561225727,
+  "neuralmf_drop_sd": 0.010129948003654998
+}

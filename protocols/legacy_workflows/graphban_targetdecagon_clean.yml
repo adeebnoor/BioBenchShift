@@ -1,0 +1,84 @@
+name: graphban-targetdecagon-clean
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_graphban_targetdecagon_clean.py
+      - analysis/probe_graphban_targetdecagon_mapping.py
+      - .github/workflows/graphban_targetdecagon_clean.yml
+      - GRAPHBAN_PROTOCOL_AMENDMENT_20260913.md
+      - results/graphban_targetdecagon_mapping_drug_map.csv
+      - results/graphban_targetdecagon_mapping_gene_map.csv
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean-challenge:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install leakage-free GraphBAN dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1 fair-esm==2.0.0 transformers==4.47.0 pandas scipy scikit-learn requests
+          python - <<'PY'
+          import numpy, torch
+          print('numpy', numpy.__version__)
+          print('torch', torch.__version__)
+          assert numpy.__version__ == '1.26.4'
+          PY
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz -o external_data/ChG-TargetDecagon_targets.csv.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz | tee results/graphban_clean_targetdecagon_input.sha256
+      - name: Materialize or verify frozen mapping gate
+        run: |
+          if [ ! -s results/graphban_targetdecagon_mapping_drug_map.csv ] || [ ! -s results/graphban_targetdecagon_mapping_gene_map.csv ] || [ ! -s results/graphban_targetdecagon_mapping_summary.json ]; then
+            python analysis/probe_graphban_targetdecagon_mapping.py \
+              --input external_data/ChG-TargetDecagon_targets.csv.gz \
+              --out-prefix results/graphban_targetdecagon_mapping
+          fi
+          python - <<'PY'
+          import json
+          x=json.load(open('results/graphban_targetdecagon_mapping_summary.json'))
+          assert x['mapping_gate_pass'], x
+          print('mapping gate PASS',x['mapped_positive_edge_fraction'])
+          PY
+      - name: Run leakage-free contemporary challenge
+        env:
+          TOKENIZERS_PARALLELISM: 'false'
+        run: |
+          python analysis/run_graphban_targetdecagon_clean.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --out-prefix results/graphban_targetdecagon_clean \
+            --seeds 0,1,2
+          cat results/graphban_targetdecagon_clean.md
+      - name: Commit frozen S6 outputs and mapping provenance
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/graphban_clean_targetdecagon_input.sha256 \
+                  results/graphban_targetdecagon_mapping_drug_map.csv \
+                  results/graphban_targetdecagon_mapping_gene_map.csv \
+                  results/graphban_targetdecagon_mapping_summary.json \
+                  results/graphban_targetdecagon_mapping.md \
+                  results/graphban_targetdecagon_clean_replicates.csv \
+                  results/graphban_targetdecagon_clean_summary.json \
+                  results/graphban_targetdecagon_clean.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record leakage-free GraphBAN TargetDecagon S6 result [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,0 +1,89 @@
+Anti-DDI v2 — licensing
+=======================
+
+This release is dual-licensed. The split is by file type, and it is deliberate:
+the software should be reusable with minimal friction, and the data should be
+reusable with attribution so that the negative claims remain traceable to their
+provenance and their stated limitations.
+
+-------------------------------------------------------------------------------
+CODE — MIT License
+-------------------------------------------------------------------------------
+Applies to: antiddi/ (all Python modules), validate.py, pyproject.toml,
+CITATION.cff, .github/workflows/ci.yml, and any other software or
+configuration file in this release.
+
+Copyright (c) 2026 Abdullah Assiri and Adeeb Noor
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+DATA AND DOCUMENTATION — Creative Commons Attribution 4.0 International
+(CC-BY-4.0)
+-------------------------------------------------------------------------------
+Applies to: data/ (all CSV and Markdown files), figures/ (all image files),
+README.md, and the accompanying disclosure and deposit documents.
+
+Copyright (c) 2026 Abdullah Assiri and Adeeb Noor
+
+These materials are licensed under the Creative Commons Attribution 4.0
+International License. You are free to share and adapt them for any purpose,
+including commercially, provided you give appropriate credit, provide a link to
+the license, and indicate if changes were made.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by/4.0/
+
+Suggested attribution:
+
+  Assiri A, Noor A. Anti-DDI v2: a tiered negative-control resource for
+  drug-drug interaction research (Version 2.0.0) [Data set]. Zenodo.
+  doi:[AUTHOR: Zenodo DOI]. Licensed under CC-BY-4.0.
+
+-------------------------------------------------------------------------------
+THIRD-PARTY MATERIAL
+-------------------------------------------------------------------------------
+The data files contain identifiers and derived counts drawn from external
+sources, which remain subject to their own terms:
+
+  - Adverse-event report counts are derived from the openFDA FAERS API, a
+    public data service of the United States Food and Drug Administration.
+  - RxNorm concept identifiers (rxcui_a, rxcui_b) originate from the U.S.
+    National Library of Medicine.
+  - ATC codes (atc_a, atc_b) are used for classification; ATC is maintained by
+    the WHO Collaborating Centre for Drug Statistics Methodology.
+  - DrugBank identifiers (drugbank_a, drugbank_b) are cross-references to
+    DrugBank, which applies its own licence to its content. Only the accession
+    strings are reproduced here.
+  - ChEMBL identifiers (chembl_a, chembl_b) are cross-references to ChEMBL
+    (EMBL-EBI).
+
+No third-party database content is redistributed beyond the identifier strings
+and the aggregate counts described in data/DATA_DICTIONARY.md.
+
+-------------------------------------------------------------------------------
+NO CLINICAL WARRANTY
+-------------------------------------------------------------------------------
+This release is an evaluation and benchmarking resource. It does not license
+the co-prescription of any drug pair and is not a source of clinical
+drug-interaction information. Nothing in it substitutes for the judgement of a
+qualified healthcare professional with access to the full patient context and a
+current, maintained drug-information source. The licences above grant rights to
+use and redistribute these materials; they grant no warranty of clinical
+fitness of any kind.

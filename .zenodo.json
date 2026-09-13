@@ -1,0 +1,9 @@
+{
+  "title": "BioBenchShift: Benchmark design redirects biomedical discovery",
+  "upload_type": "software",
+  "description": "Pre-submission reproducibility package linking biomedical AI benchmark construction to model selection, hypothesis identity, temporal BioGRID evidence and independent ChEMBL evidence.",
+  "creators": [{"name":"Noor, Adeeb","orcid":"0000-0002-8251-1853","affiliation":"King Abdulaziz University"}],
+  "keywords": ["biomedical artificial intelligence","benchmark design","model selection","hypothesis prioritization","network biology","reproducibility"],
+  "version": "pre-submission-2026.09.13",
+  "access_right": "open"
+}

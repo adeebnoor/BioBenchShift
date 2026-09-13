@@ -1,0 +1,59 @@
+name: gate2-lightgcn-crossdomain
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_lightgcn_gate2.py
+      - .github/workflows/gate2_lightgcn.yml
+      - lightgcn.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lightgcn-crossdomain:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install dependencies
+        run: |
+          python -m pip install pandas numpy scikit-learn
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Acquire frozen public datasets
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz -o external_data/ChG-TargetDecagon_targets.csv.gz
+          curl -fL --retry 4 --retry-delay 2 https://media.githubusercontent.com/media/hetio/hetionet/main/hetnet/tsv/hetionet-v1.0-edges.sif.gz -o external_data/hetionet-v1.0-edges.sif.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz external_data/hetionet-v1.0-edges.sif.gz > results/lightgcn_inputs.sha256
+      - name: BioSNAP DTI LightGCN
+        run: |
+          python analysis/run_lightgcn_gate2.py --input external_data/ChG-TargetDecagon_targets.csv.gz --format biosnap --label 'BioSNAP TargetDecagon DTI' --out-prefix results/biosnap_dti_lightgcn --replicates 3
+          cat results/biosnap_dti_lightgcn.md
+      - name: Hetionet CtD LightGCN
+        run: |
+          python analysis/run_lightgcn_gate2.py --input external_data/hetionet-v1.0-edges.sif.gz --format hetionet --metaedge CtD --left-prefix 'Compound::' --right-prefix 'Disease::' --label 'Hetionet Compound-treats-Disease (CtD)' --out-prefix results/hetionet_ctd_lightgcn --replicates 3
+          cat results/hetionet_ctd_lightgcn.md
+      - name: Hetionet DaG LightGCN
+        run: |
+          python analysis/run_lightgcn_gate2.py --input external_data/hetionet-v1.0-edges.sif.gz --format hetionet --metaedge DaG --left-prefix 'Disease::' --right-prefix 'Gene::' --label 'Hetionet Disease-associates-Gene (DaG)' --out-prefix results/hetionet_dag_lightgcn --replicates 3
+          cat results/hetionet_dag_lightgcn.md
+      - name: Commit frozen LightGCN results with retry
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/lightgcn_inputs.sha256 results/*_lightgcn*
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record cross-domain LightGCN Gate 2 results [skip ci]'
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main || { git rebase --abort || true; exit 1; }
+            if git push origin HEAD:main; then exit 0; fi
+            echo "push race on attempt $attempt; retrying"
+            sleep 2
+          done
+          exit 1

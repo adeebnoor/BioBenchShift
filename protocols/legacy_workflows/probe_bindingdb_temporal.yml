@@ -1,0 +1,46 @@
+name: probe-bindingdb-temporal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/probe_bindingdb_temporal.yml
+      - bindingdb_probe.trigger
+  workflow_dispatch:
+
+jobs:
+  probe:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download archived curated-article BindingDB TSV (202608)
+        run: |
+          mkdir -p external_data
+          URL='https://www.bindingdb.org/rwd/bind/chemsearch/marvin/SDFdownload.jsp?download_file=%2Frwd%2Fbind%2Fdownloads%2FBindingDB_BindingDB_Articles_202608_tsv.zip'
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o external_data/bindingdb_articles.zip
+          file external_data/bindingdb_articles.zip
+          ls -lh external_data/bindingdb_articles.zip
+          sha256sum external_data/bindingdb_articles.zip
+          unzip -t external_data/bindingdb_articles.zip
+          unzip -l external_data/bindingdb_articles.zip | head -20
+          unzip -q external_data/bindingdb_articles.zip -d external_data/bindingdb_articles
+      - name: Inspect schema and temporal fields
+        run: |
+          python - <<'PY'
+          import glob, pandas as pd, os
+          fs=[f for f in glob.glob('external_data/bindingdb_articles/*') if os.path.isfile(f)]
+          print('FILES',[(os.path.basename(f),os.path.getsize(f)) for f in fs])
+          f=max(fs,key=os.path.getsize)
+          d=pd.read_csv(f,sep='\t',nrows=5,low_memory=False)
+          print('COLUMNS',list(d.columns))
+          dc=[c for c in d.columns if 'date' in c.lower() or 'year' in c.lower() or 'pub' in c.lower()]
+          print('DATE_COLUMNS',dc)
+          print(d[dc[:20]].head().to_string())
+          print('IDENTIFIER_COLUMNS',[c for c in d.columns if any(k in c.lower() for k in ['bindingdb monomer','target chain','uniprot','pubchem','ligand','target name'])])
+          PY

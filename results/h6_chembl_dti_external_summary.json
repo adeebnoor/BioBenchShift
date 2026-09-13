@@ -1,0 +1,55 @@
+{
+  "chembl_version": "ChEMBL_37",
+  "protocol": "EXTERNAL_DTI_CHEMBL_PROTOCOL.md",
+  "initializations_per_model": 5,
+  "mapping": {
+    "drug_mapping_coverage": 0.9295774647887324,
+    "gene_mapping_coverage": 0.5200109649122807,
+    "mapped_drugs": 264,
+    "total_drugs": 284,
+    "mapped_genes": 1897,
+    "total_genes": 3648,
+    "candidate_universe": 1017342,
+    "mapped_candidate_universe": 486560,
+    "n_mapped_molecules": 264,
+    "n_mapped_targets_raw": 1876,
+    "n_eligible_single_protein_human_targets": 1790,
+    "n_activities_pchembl_ge_6_on_mapped_targets": 9509,
+    "n_good_binding_conf9_assays": 4636,
+    "n_supported_candidate_pairs_pchembl_ge_6": 66,
+    "n_supported_candidate_pairs_pchembl_ge_7": 26,
+    "n_supported_candidate_pairs_exact_relation_ge_6": 66
+  },
+  "confirmatory_SVD_minus_NeuralMF_hits": {
+    "100": {
+      "svd_hits": 3,
+      "neuralmf_hits": 0,
+      "difference": 3
+    },
+    "500": {
+      "svd_hits": 5,
+      "neuralmf_hits": 0,
+      "difference": 5
+    },
+    "1000": {
+      "svd_hits": 6,
+      "neuralmf_hits": 2,
+      "difference": 4
+    },
+    "5000": {
+      "svd_hits": 13,
+      "neuralmf_hits": 12,
+      "difference": 1
+    },
+    "10000": {
+      "svd_hits": 15,
+      "neuralmf_hits": 19,
+      "difference": -4
+    },
+    "50000": {
+      "svd_hits": 23,
+      "neuralmf_hits": 35,
+      "difference": -12
+    }
+  }
+}

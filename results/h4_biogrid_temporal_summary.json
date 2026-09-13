@@ -1,0 +1,19 @@
+{
+  "old_release": "5.0.250",
+  "new_release": "5.0.261",
+  "old_member": "BIOGRID-MV-Physical-5.0.250.tab3.txt",
+  "new_member": "BIOGRID-MV-Physical-5.0.261.tab3.txt",
+  "old_human_mv_edges": 93146,
+  "new_human_mv_edges": 98829,
+  "historical_nodes": 11844,
+  "closed_world_future_edges": 5635,
+  "internal_replicates": 3,
+  "internal_matching_fraction_mean": 1.0,
+  "conventional_winner": "NeuralMF",
+  "neutralized_winner": "SVD",
+  "conventional_winner_future_matched_auc": 0.548939265224241,
+  "neutralized_winner_future_matched_auc": 0.7029831143135856,
+  "future_auc_difference_neutralized_minus_conventional": 0.15404384908934465,
+  "verdict": "NEUTRALIZED_WINS_FUTURE",
+  "interpretation": "Future edges are relations absent from BioGRID 5.0.250 and present in 5.0.261, restricted to endpoints already present historically. Persistent unobserved pairs are controls, not proven biological negatives."
+}

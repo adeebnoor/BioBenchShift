@@ -1,0 +1,58 @@
+name: gate2-hetionet-models
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_hetionet_gate2_models.py
+      - .github/workflows/gate2_hetionet_models.yml
+      - gate2_hetionet.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hetionet-models:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install pandas numpy scipy scikit-learn
+      - name: Acquire frozen Hetionet v1.0 edges
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 https://media.githubusercontent.com/media/hetio/hetionet/main/hetnet/tsv/hetionet-v1.0-edges.sif.gz -o external_data/hetionet-v1.0-edges.sif.gz
+          sha256sum external_data/hetionet-v1.0-edges.sif.gz | tee results/hetionet_gate2.sha256
+          gzip -t external_data/hetionet-v1.0-edges.sif.gz
+      - name: Evaluate CtD learned models
+        run: |
+          python analysis/run_hetionet_gate2_models.py \
+            --input external_data/hetionet-v1.0-edges.sif.gz \
+            --metaedge CtD --left-prefix 'Compound::' --right-prefix 'Disease::' \
+            --label 'Hetionet Compound-treats-Disease (CtD)' \
+            --out-prefix results/hetionet_ctd_gate2 --replicates 5
+          cat results/hetionet_ctd_gate2.md
+      - name: Evaluate DaG learned models
+        run: |
+          python analysis/run_hetionet_gate2_models.py \
+            --input external_data/hetionet-v1.0-edges.sif.gz \
+            --metaedge DaG --left-prefix 'Disease::' --right-prefix 'Gene::' \
+            --label 'Hetionet Disease-associates-Gene (DaG)' \
+            --out-prefix results/hetionet_dag_gate2 --replicates 5
+          cat results/hetionet_dag_gate2.md
+      - name: Commit frozen Gate 2 results safely
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/hetionet_gate2.sha256 results/hetionet_ctd_gate2* results/hetionet_dag_gate2*
+          if git diff --cached --quiet; then
+            echo unchanged
+          else
+            git commit -m 'Record Hetionet learned-model Gate 2 pilots [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

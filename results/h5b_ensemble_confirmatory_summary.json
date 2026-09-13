@@ -1,0 +1,73 @@
+{
+  "DTI": {
+    "candidate_count": 802939,
+    "conventional_ensemble": "NeuralMF",
+    "neutralized_ensemble": "SVD",
+    "initializations": 5,
+    "metrics": {
+      "100": {
+        "cross_ht": 1.0,
+        "conventional_loo_ht_mean": 0.08499999999999999,
+        "conventional_loo_ht_max": 0.13,
+        "neutralized_loo_ht_mean": 0.04200000000000004,
+        "neutralized_loo_ht_max": 0.050000000000000044,
+        "cross_minus_worst_loo_mean": 0.915,
+        "cross_minus_worst_loo_max": 0.87
+      },
+      "500": {
+        "cross_ht": 1.0,
+        "conventional_loo_ht_mean": 0.004800000000000004,
+        "conventional_loo_ht_max": 0.006000000000000005,
+        "neutralized_loo_ht_mean": 0.03320000000000003,
+        "neutralized_loo_ht_max": 0.04200000000000004,
+        "cross_minus_worst_loo_mean": 0.9668,
+        "cross_minus_worst_loo_max": 0.958
+      },
+      "1000": {
+        "cross_ht": 0.9390000000000001,
+        "conventional_loo_ht_mean": 0.06600000000000002,
+        "conventional_loo_ht_max": 0.10299999999999998,
+        "neutralized_loo_ht_mean": 0.03820000000000003,
+        "neutralized_loo_ht_max": 0.04300000000000004,
+        "cross_minus_worst_loo_mean": 0.873,
+        "cross_minus_worst_loo_max": 0.8360000000000001
+      }
+    }
+  },
+  "Disease-Gene": {
+    "candidate_count": 611399,
+    "conventional_ensemble": "NeuralMF",
+    "neutralized_ensemble": "LightGCN",
+    "initializations": 5,
+    "metrics": {
+      "100": {
+        "cross_ht": 0.8,
+        "conventional_loo_ht_mean": 0.378,
+        "conventional_loo_ht_max": 0.41000000000000003,
+        "neutralized_loo_ht_mean": 0.21899999999999994,
+        "neutralized_loo_ht_max": 0.26,
+        "cross_minus_worst_loo_mean": 0.42200000000000004,
+        "cross_minus_worst_loo_max": 0.39
+      },
+      "500": {
+        "cross_ht": 0.74,
+        "conventional_loo_ht_mean": 0.35259999999999997,
+        "conventional_loo_ht_max": 0.376,
+        "neutralized_loo_ht_mean": 0.17679999999999998,
+        "neutralized_loo_ht_max": 0.19799999999999995,
+        "cross_minus_worst_loo_mean": 0.3874,
+        "cross_minus_worst_loo_max": 0.364
+      },
+      "1000": {
+        "cross_ht": 0.7170000000000001,
+        "conventional_loo_ht_mean": 0.3251,
+        "conventional_loo_ht_max": 0.344,
+        "neutralized_loo_ht_mean": 0.19069999999999998,
+        "neutralized_loo_ht_max": 0.20399999999999996,
+        "cross_minus_worst_loo_mean": 0.3919000000000001,
+        "cross_minus_worst_loo_max": 0.3730000000000001
+      }
+    }
+  },
+  "fixed_split_seed": 0
+}

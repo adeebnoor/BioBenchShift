@@ -1,0 +1,19 @@
+{
+  "benchmark": "BioSNAP TargetDecagon drug-target interactions",
+  "source_url": "https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz",
+  "matching_strategy": "targeted same log2 degree-bin nonedges, degrees computed on training edges only",
+  "edge_count": 18690,
+  "left_nodes": 284,
+  "right_nodes": 3648,
+  "replicates": 20,
+  "auc_random_mean": 0.9833278022179224,
+  "auc_random_sd": 0.0014662050280795228,
+  "auc_degree_matched_mean": 0.6198172576444143,
+  "auc_degree_matched_sd": 0.011528493347741675,
+  "inflation_auc_mean": 0.36351054457350823,
+  "inflation_auc_sd": 0.01141768854621868,
+  "collapse_fraction_mean": 0.7521067980130127,
+  "matched_fraction_mean": 0.5994605804943609,
+  "seen_test_fraction_mean": 0.8373461744248262,
+  "interpretation_boundary": "Model-free structural diagnostic; no claim about biological truth or clinical validity."
+}

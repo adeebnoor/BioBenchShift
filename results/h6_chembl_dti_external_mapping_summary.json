@@ -1,0 +1,18 @@
+{
+  "drug_mapping_coverage": 0.9295774647887324,
+  "gene_mapping_coverage": 0.5200109649122807,
+  "mapped_drugs": 264,
+  "total_drugs": 284,
+  "mapped_genes": 1897,
+  "total_genes": 3648,
+  "candidate_universe": 1017342,
+  "mapped_candidate_universe": 486560,
+  "n_mapped_molecules": 264,
+  "n_mapped_targets_raw": 1876,
+  "n_eligible_single_protein_human_targets": 1790,
+  "n_activities_pchembl_ge_6_on_mapped_targets": 9509,
+  "n_good_binding_conf9_assays": 4636,
+  "n_supported_candidate_pairs_pchembl_ge_6": 66,
+  "n_supported_candidate_pairs_pchembl_ge_7": 26,
+  "n_supported_candidate_pairs_exact_relation_ge_6": 66
+}

@@ -1,0 +1,54 @@
+name: h5b-ensemble-confirmatory
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_h5_ensemble_confirmatory.py
+      - .github/workflows/h5b_ensemble_confirmatory.yml
+      - h5b_ensemble.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ensemble:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install dependencies
+        run: |
+          python -m pip install pandas numpy scipy scikit-learn
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Acquire frozen datasets
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz -o external_data/ChG-TargetDecagon_targets.csv.gz
+          curl -fL --retry 4 --retry-delay 2 https://media.githubusercontent.com/media/hetio/hetionet/main/hetnet/tsv/hetionet-v1.0-edges.sif.gz -o external_data/hetionet-v1.0-edges.sif.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz external_data/hetionet-v1.0-edges.sif.gz > results/h5b_ensemble_inputs.sha256
+      - name: Run confirmatory ensemble analysis
+        run: |
+          python analysis/run_h5_ensemble_confirmatory.py \
+            --dti external_data/ChG-TargetDecagon_targets.csv.gz \
+            --hetionet external_data/hetionet-v1.0-edges.sif.gz \
+            --out-prefix results/h5b_ensemble_confirmatory \
+            --inits 5
+          cat results/h5b_ensemble_confirmatory.md
+      - name: Commit frozen results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/h5b_ensemble_inputs.sha256 results/h5b_ensemble_confirmatory*
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record confirmatory H5 ensemble analysis [skip ci]'
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main || { git rebase --abort || true; exit 1; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1

@@ -1,0 +1,50 @@
+name: materialize-v3-release-data
+
+on:
+  push:
+    branches:
+      - release/antiddi-v3.0.0
+    paths:
+      - build_v3.py
+      - validate_v3.py
+      - data/antiddi_v2_dataset.csv
+      - .github/workflows/materialize_v3_release.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/antiddi-v3.0.0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install release dependencies
+        run: python -m pip install pandas numpy scipy
+
+      - name: Build and validate v3 data products
+        run: |
+          python build_v3.py
+          python validate_v3.py
+
+      - name: Commit generated release data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data/antiddi_v3_dataset.csv data/antiddi_v3_benchmark.csv data/paper5_split_manifest.csv data/clinical_anchor_pairs.csv
+          if git diff --cached --quiet; then
+            echo "Generated v3 data are already current."
+          else
+            git commit -m "Materialize Anti-DDI v3 release data [skip ci]"
+            git push origin HEAD:release/antiddi-v3.0.0
+          fi
+
+# This workflow materializes only deterministic release tables; v2 data remain unchanged.

@@ -1,0 +1,8 @@
+TRY https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.250/BIOGRID-MV-Physical-5.0.250.tab3.zip
+SIZE=33258249 TYPE=Zip archive data, at least v2.0 to extract, compression method=deflate
+SUCCESS 5.0.250 https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.250/BIOGRID-MV-Physical-5.0.250.tab3.zip
+acb4f2450ebd503ad77dafdff2b799cbe6c1e878a24975a21c69344d50738876  external_data/BIOGRID-MV-Physical-5.0.250.tab3.zip
+TRY https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.261/BIOGRID-MV-Physical-5.0.261.tab3.zip
+SIZE=34843705 TYPE=Zip archive data, at least v2.0 to extract, compression method=deflate
+SUCCESS 5.0.261 https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-5.0.261/BIOGRID-MV-Physical-5.0.261.tab3.zip
+a6320639642119609f5187df4baf40b7dcf2c6e03624b023cc5b7747f674f391  external_data/BIOGRID-MV-Physical-5.0.261.tab3.zip

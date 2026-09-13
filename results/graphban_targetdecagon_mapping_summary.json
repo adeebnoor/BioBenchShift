@@ -1,0 +1,19 @@
+{
+  "benchmark": "BioSNAP TargetDecagon DTI",
+  "edges": 18690,
+  "drugs": 284,
+  "genes": 3648,
+  "mapped_drugs": 284,
+  "mapped_drug_fraction": 1.0,
+  "mapped_genes": 3607,
+  "mapped_gene_fraction": 0.9887609649122807,
+  "mapped_genes_with_sequence": 3607,
+  "mapped_gene_with_sequence_fraction": 0.9887609649122807,
+  "mapped_positive_edges": 18631,
+  "mapped_positive_edge_fraction": 0.9968432316746924,
+  "genes_with_multiple_human_uniprot_mappings": 1771,
+  "selected_reviewed_genes": 3598,
+  "mapping_gate_threshold": 0.9,
+  "mapping_gate_pass": true,
+  "note": "Mapping-only preflight; positive-edge gate requires both SMILES and an actual human UniProt sequence. No model outcomes inspected."
+}

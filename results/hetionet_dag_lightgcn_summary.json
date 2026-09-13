@@ -1,0 +1,14 @@
+{
+  "benchmark": "Hetionet Disease-associates-Gene (DaG)",
+  "edge_count": 12623,
+  "replicates": 3,
+  "lightgcn_auc_random_mean": 0.7936563399920114,
+  "lightgcn_auc_random_sd": 0.012369222980364943,
+  "lightgcn_auc_matched_mean": 0.7206952433472916,
+  "lightgcn_auc_matched_sd": 0.016316730206879036,
+  "lightgcn_drop_mean": 0.07296109664471977,
+  "lightgcn_drop_sd": 0.011464936625652632,
+  "match_fraction_mean": 1.0,
+  "seen_fraction_mean": 0.7156435643564357,
+  "model": "2-layer LightGCN-style message passing, embeddings trained with random unlabelled negatives"
+}

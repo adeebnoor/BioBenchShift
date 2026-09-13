@@ -1,0 +1,54 @@
+name: gate1-hetionet-ctd
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_hetionet_ctd_gate1.py
+      - .github/workflows/gate1_hetionet_ctd.yml
+      - ctd.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hetionet-ctd:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install pandas numpy
+      - name: Acquire frozen Hetionet v1.0 edges
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 \
+            https://media.githubusercontent.com/media/hetio/hetionet/main/hetnet/tsv/hetionet-v1.0-edges.sif.gz \
+            -o external_data/hetionet-v1.0-edges.sif.gz
+          sha256sum external_data/hetionet-v1.0-edges.sif.gz | tee results/hetionet_v1_edges.sha256
+          gzip -t external_data/hetionet-v1.0-edges.sif.gz
+          zcat external_data/hetionet-v1.0-edges.sif.gz | head -5 | cat -A || true
+      - name: Run prespecified CtD Gate 1 audit
+        run: |
+          python analysis/run_hetionet_ctd_gate1.py \
+            --input external_data/hetionet-v1.0-edges.sif.gz \
+            --out-csv results/hetionet_ctd_gate1_replicates.csv \
+            --out-json results/hetionet_ctd_gate1_summary.json \
+            --out-md results/hetionet_ctd_gate1.md \
+            --replicates 50
+          cat results/hetionet_ctd_gate1.md
+      - name: Commit frozen results and checksum
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/hetionet_v1_edges.sha256 results/hetionet_ctd_gate1_replicates.csv results/hetionet_ctd_gate1_summary.json results/hetionet_ctd_gate1.md
+          if git diff --cached --quiet; then echo 'Results unchanged.'; else
+            git commit -m 'Record Hetionet CtD Gate 1 results [skip ci]'
+            git push origin HEAD:main
+          fi

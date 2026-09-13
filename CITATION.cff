@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: >-
+  If you use BioBenchShift, cite the archived release/commit and the
+  accompanying peer-reviewed article when available.
+title: >-
+  BioBenchShift: Benchmark design redirects biomedical discovery
+version: pre-submission-2026.09.13
+date-released: "2026-09-13"
+type: software
+license: MIT
+authors:
+  - family-names: Noor
+    given-names: Adeeb
+    affiliation: >-
+      Department of Information Technology, Faculty of Computing and Information
+      Technology, King Abdulaziz University, Jeddah, Saudi Arabia
+    email: arnoor@kau.edu.sa
+    orcid: "https://orcid.org/0000-0002-8251-1853"
+repository-code: "https://github.com/adeebnoor/BioBenchShift"
+url: "https://github.com/adeebnoor/BioBenchShift"
+keywords:
+  - biomedical artificial intelligence
+  - benchmark design
+  - model selection
+  - hypothesis prioritization
+  - network biology
+  - drug-target interaction
+  - protein-protein interaction
+  - structural bias
+  - reproducibility
+abstract: >-
+  BioBenchShift is the pre-submission reproducibility package for a study
+  testing whether biomedical AI benchmark construction changes model selection,
+  hypothesis identity, and later or independent evidence concentrated among
+  prioritized hypotheses.

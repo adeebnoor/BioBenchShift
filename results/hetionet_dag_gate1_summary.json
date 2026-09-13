@@ -1,0 +1,16 @@
+{
+  "benchmark": "Hetionet Disease-associates-Gene (DaG)",
+  "metaedge": "DaG",
+  "edge_count": 12623,
+  "left_nodes": 134,
+  "right_nodes": 5392,
+  "replicates": 20,
+  "auc_random_mean": 0.8760086848590717,
+  "auc_random_sd": 0.005618896832682814,
+  "auc_degree_matched_mean": 0.513060849181787,
+  "auc_degree_matched_sd": 0.0016122855691310372,
+  "inflation_auc_mean": 0.3629478356772845,
+  "inflation_auc_sd": 0.006051153041213911,
+  "matched_fraction_mean": 1.0,
+  "seen_fraction_mean": 0.7158019801980198
+}

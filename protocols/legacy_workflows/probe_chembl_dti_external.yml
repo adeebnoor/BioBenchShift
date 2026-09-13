@@ -1,0 +1,53 @@
+name: probe-chembl-dti-external
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/probe_chembl_dti_external.yml
+      - chembl_probe.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - name: Probe BioSNAP identifiers and ChEMBL interfaces
+        run: |
+          set -euo pipefail
+          mkdir -p external_data results
+          curl -fL --retry 3 https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz -o external_data/dti.csv.gz
+          {
+            echo '## BioSNAP sample'
+            gzip -dc external_data/dti.csv.gz | head -10 || true
+            echo '## ChEMBL status'
+            curl -fsSL 'https://www.ebi.ac.uk/chembl/api/data/status.json'
+            echo
+            echo '## ChEMBL target_component sample'
+            curl -fsSL 'https://www.ebi.ac.uk/chembl/api/data/target_component.json?limit=1'
+            echo
+            echo '## ChEMBL target_component Entrez-xref filter test'
+            curl -fsSL 'https://www.ebi.ac.uk/chembl/api/data/target_component.json?component_xrefs__xref_id=7157&limit=5'
+            echo
+            echo '## ChEMBL release dump HEAD probes'
+            for V in 35 36; do
+              U="https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_${V}/chembl_${V}_sqlite.tar.gz"
+              echo "URL=$U"
+              curl -fsSIL "$U" | grep -Ei 'HTTP/|content-length|last-modified|etag' || true
+            done
+          } > results/chembl_dti_probe.txt
+          cat results/chembl_dti_probe.txt
+      - name: Commit probe
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/chembl_dti_probe.txt
+          git commit -m 'Record ChEMBL DTI external-replication probe [skip ci]' || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main

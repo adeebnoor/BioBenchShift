@@ -1,0 +1,11 @@
+{
+  "old_release": "5.0.250",
+  "new_release": "5.0.261",
+  "historical_nodes": 11844,
+  "historical_edges": 93146,
+  "candidate_non_edges": 70041100,
+  "later_added_closed_world_edges": 5635,
+  "future_prevalence_in_candidate_universe": 8.045276273502272e-05,
+  "ranking_seed": 100,
+  "note": "Precision is a lower bound because pairs not added by 5.0.261 are persistent-unobserved, not proven negatives."
+}

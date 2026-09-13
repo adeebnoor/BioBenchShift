@@ -1,0 +1,45 @@
+name: gate2-biosnap-models
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analysis/run_biosnap_dti_gate2_models.py
+      - .github/workflows/gate2_biosnap_models.yml
+      - gate2.trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  models:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install pandas numpy scipy scikit-learn
+      - name: Acquire BioSNAP DTI
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz -o external_data/ChG-TargetDecagon_targets.csv.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz | tee results/biosnap_gate2.sha256
+      - name: Train and evaluate two learned latent models
+        run: |
+          python analysis/run_biosnap_dti_gate2_models.py --input external_data/ChG-TargetDecagon_targets.csv.gz --out-prefix results/biosnap_dti_gate2 --replicates 5
+          cat results/biosnap_dti_gate2.md
+      - name: Commit frozen pilot results safely
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/biosnap_gate2.sha256 results/biosnap_dti_gate2_replicates.csv results/biosnap_dti_gate2_summary.json results/biosnap_dti_gate2.md
+          if git diff --cached --quiet; then
+            echo unchanged
+          else
+            git commit -m 'Record BioSNAP learned-model Gate 2 pilot [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

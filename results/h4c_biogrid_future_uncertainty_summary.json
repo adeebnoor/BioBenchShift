@@ -1,0 +1,63 @@
+{
+  "bootstrap_replicates": 20000,
+  "bootstrap_seed": 20260913,
+  "later_supported_edges": 5635,
+  "candidate_universe": 70041100,
+  "paired_contrast": "SVD minus NeuralMF recall among later-added BioGRID edges",
+  "rows": [
+    {
+      "k": 100,
+      "svd_minus_neuralmf_recall": 0.0012422360248447205,
+      "paired_boot_lo": 0.000354924578527063,
+      "paired_boot_hi": 0.0023070097604259094,
+      "bootstrap_p_nonpositive": 0.0007999600019999,
+      "svd_hits": 7,
+      "neuralmf_hits": 0
+    },
+    {
+      "k": 500,
+      "svd_minus_neuralmf_recall": 0.0030168589174800354,
+      "paired_boot_lo": 0.0015971606033717836,
+      "paired_boot_hi": 0.004614019520851819,
+      "bootstrap_p_nonpositive": 4.999750012499375e-05,
+      "svd_hits": 18,
+      "neuralmf_hits": 1
+    },
+    {
+      "k": 1000,
+      "svd_minus_neuralmf_recall": 0.0037267080745341614,
+      "paired_boot_lo": 0.0019520851818988466,
+      "paired_boot_hi": 0.005678793256433008,
+      "bootstrap_p_nonpositive": 4.999750012499375e-05,
+      "svd_hits": 26,
+      "neuralmf_hits": 5
+    },
+    {
+      "k": 5000,
+      "svd_minus_neuralmf_recall": 0.011535048802129548,
+      "paired_boot_lo": 0.00816326530612245,
+      "paired_boot_hi": 0.015084294587400177,
+      "bootstrap_p_nonpositive": 4.999750012499375e-05,
+      "svd_hits": 87,
+      "neuralmf_hits": 22
+    },
+    {
+      "k": 10000,
+      "svd_minus_neuralmf_recall": 0.020763087843833187,
+      "paired_boot_lo": 0.0163265306122449,
+      "paired_boot_hi": 0.025199645075421474,
+      "bootstrap_p_nonpositive": 4.999750012499375e-05,
+      "svd_hits": 159,
+      "neuralmf_hits": 42
+    },
+    {
+      "k": 50000,
+      "svd_minus_neuralmf_recall": 0.06051464063886424,
+      "paired_boot_lo": 0.053061224489795916,
+      "paired_boot_hi": 0.06796805678793257,
+      "bootstrap_p_nonpositive": 4.999750012499375e-05,
+      "svd_hits": 522,
+      "neuralmf_hits": 181
+    }
+  ]
+}

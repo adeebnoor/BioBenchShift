@@ -1,0 +1,14 @@
+{
+  "benchmark": "BioSNAP TargetDecagon DTI",
+  "edge_count": 18690,
+  "replicates": 3,
+  "lightgcn_auc_random_mean": 0.9886711810516661,
+  "lightgcn_auc_random_sd": 0.0005753701762147046,
+  "lightgcn_auc_matched_mean": 0.8834772909651712,
+  "lightgcn_auc_matched_sd": 0.005129789372531961,
+  "lightgcn_drop_mean": 0.10519389008649478,
+  "lightgcn_drop_sd": 0.005448750136352197,
+  "match_fraction_mean": 0.5988081589273793,
+  "seen_fraction_mean": 0.8382379168896023,
+  "model": "2-layer LightGCN-style message passing, embeddings trained with random unlabelled negatives"
+}

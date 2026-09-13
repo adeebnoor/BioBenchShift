@@ -1,0 +1,16 @@
+{
+  "benchmark": "HuRI human protein-protein interaction network",
+  "edge_count": 52068,
+  "nodes": 8245,
+  "replicates": 20,
+  "auc_random_mean": 0.9283198843848577,
+  "auc_random_sd": 0.0019201369123944749,
+  "auc_degree_matched_mean": 0.513483920564856,
+  "auc_degree_matched_sd": 0.0007678266286491282,
+  "inflation_auc_mean": 0.41483596382000176,
+  "inflation_auc_sd": 0.0017839025886473676,
+  "matched_fraction_mean": 0.9999899035174028,
+  "seen_fraction_mean": 0.9492606107163434,
+  "matching_strategy": "targeted same unordered log2 degree-bin nonedges; degrees from training edges only",
+  "interpretation_boundary": "Model-free structural diagnostic only."
+}

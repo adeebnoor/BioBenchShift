@@ -1,0 +1,16 @@
+{
+  "benchmark": "Hetionet v1.0 Compound-treats-Disease (CtD)",
+  "edge_count": 755,
+  "compounds": 387,
+  "diseases": 77,
+  "replicates": 50,
+  "auc_random_mean": 0.8712944904835704,
+  "auc_random_sd": 0.019204451888085908,
+  "auc_degree_matched_mean": 0.5188754027002206,
+  "auc_degree_matched_sd": 0.009740203216769197,
+  "inflation_auc_mean": 0.35241908778334996,
+  "inflation_auc_sd": 0.02105259550107806,
+  "matched_fraction_mean": 1.0,
+  "seen_fraction_mean": 0.6060927152317881,
+  "matching_strategy": "same role-specific log2 training-degree bins"
+}
