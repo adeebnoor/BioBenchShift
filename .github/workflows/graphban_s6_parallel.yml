@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chunk: [0, 1, 2, 3, 4, 5, 6, 7]
+        chunk: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,7 +52,7 @@ jobs:
             --input external_data/ChG-TargetDecagon_targets.csv.gz \
             --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
             --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
-            --kind protein --chunk-index ${{ matrix.chunk }} --num-chunks 8 \
+            --kind protein --chunk-index ${{ matrix.chunk }} --num-chunks 16 \
             --out feature_artifacts/protein_chunk_${{ matrix.chunk }}.npz
       - uses: actions/upload-artifact@v4
         with:
