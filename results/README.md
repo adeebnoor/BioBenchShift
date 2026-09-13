@@ -39,7 +39,12 @@ This directory stores immutable or versioned outputs produced by the study analy
 ## Contemporary-model challenge
 
 - `graphban_targetdecagon_mapping*` — frozen mapping gate and feature coverage.
-- Final S6 outputs are added only after the leakage-free prespecified run completes. No interim performance outcome is inferred from runtime status.
+- `graphban_targetdecagon_clean_replicates.csv` — seed-level leakage-free GraphBAN-style evaluation.
+- `graphban_targetdecagon_clean_summary.json` — frozen S6 summary.
+- `graphban_targetdecagon_clean.md` — human-readable S6 result.
+- `graphban_clean_targetdecagon_input.sha256` — frozen TargetDecagon input checksum used in the completion run.
+
+The completed challenge retained **99.7%** mapping coverage. Mean AUROC changed from **0.9972** under conventional random-unlabelled controls to **0.9278** under structure-neutralized controls (difference **0.0694**); AUPRC changed from **0.9976** to **0.9425**. Held-out positive edges were excluded from message passing.
 
 ## Input integrity
 
