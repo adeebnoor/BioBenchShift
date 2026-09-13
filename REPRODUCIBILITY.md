@@ -25,7 +25,7 @@ The contemporary GraphBAN robustness challenge requires the additional packages 
 | BioGRID future-yield difference is robust to paired uncertainty | `analysis/run_biogrid_future_uncertainty.py` | `results/h4c_biogrid_future_uncertainty*` |
 | Independent ChEMBL evidence is more concentrated at the earliest DTI priorities after structural neutralization, with a broad-cutoff boundary | `analysis/run_chembl_dti_external.py` | `results/h6_chembl_dti_external*` |
 | Evidence-state sensitivity is model-dependent and incompletely balanced | evidence-state overlap analysis archived in results/protocols | `results/antiddi_evidence_overlap*`; `protocols/EVIDENCE_STATE_OVERLAP_PROTOCOL.md` |
-| Contemporary architecture robustness | `analysis/run_graphban_targetdecagon_clean.py` | mapping gate in `results/graphban_targetdecagon_mapping*`; final S6 output is added only after the prespecified run completes |
+| Contemporary feature-rich architecture remains benchmark-sensitive under a leakage-free protocol | `analysis/run_graphban_targetdecagon_clean.py`; `analysis/run_graphban_targetdecagon_precomputed.py` | `results/graphban_targetdecagon_mapping*`; `results/graphban_targetdecagon_clean*`; `protocols/GRAPHBAN_PROTOCOL_AMENDMENT_20260913.md`; `protocols/GRAPHBAN_EXECUTION_PARALLELIZATION_20260913.md` |
 
 ## Frozen headline values
 
@@ -55,6 +55,20 @@ At top 50,000 predictions:
 ### Independent ChEMBL 37 evidence
 
 Under the frozen primary evidence rule (human, direct single-protein binding, confidence score 9, pChEMBL ≥6), **66** supported BioSNAP candidate relations were identified. At top 100 / 500 / 1,000 priorities, the structure-neutralized-selected SVD recovered **3 / 5 / 6** versus **0 / 0 / 2** for NeuralMF. The advantage does not persist at all broad cutoffs and that crossover is part of the reported boundary.
+
+### Leakage-free contemporary GraphBAN challenge
+
+The prespecified contemporary-model completion used a GraphBAN-style heterogeneous GraphSAGE encoder with ChemBERTa drug features and ESM-1b protein features. Mapping retained **18,631 / 18,690 (99.7%)** TargetDecagon positive edges. Held-out positive edges never entered message passing. Across seeds 0, 1 and 2:
+
+- conventional random-unlabelled AUROC: **0.9972 ± 0.0002**;
+- structure-neutralized AUROC: **0.9278 ± 0.0141**;
+- mean AUROC difference: **0.0694**;
+- conventional AUPRC: **0.9976**;
+- structure-neutralized AUPRC: **0.9425**;
+- mean AUPRC difference: **0.0551**;
+- mean matching coverage: **0.5880**.
+
+The model therefore retained high absolute performance while showing a material evaluation-regime shift. This supports architectural generality of benchmark sensitivity without supporting a claim that the contemporary model contains no biological signal.
 
 ## Figure rebuild
 
