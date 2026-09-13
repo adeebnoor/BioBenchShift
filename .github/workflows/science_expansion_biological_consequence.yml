@@ -1,0 +1,50 @@
+name: science-expansion-biological-consequence
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - science-expansion-20260913
+    paths:
+      - 'analysis/run_biological_consequence_expansion.py'
+      - 'protocols/BIOLOGICAL_CONSEQUENCE_AMENDMENT_20260913.md'
+      - '.github/workflows/science_expansion_biological_consequence.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  enrichment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Download frozen BioSNAP input
+        run: |
+          mkdir -p data/science_expansion results/science_expansion
+          wget --retry-connrefused --waitretry=2 --read-timeout=60 --timeout=60 --tries=5 \
+            -O data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz
+          sha256sum data/science_expansion/ChG-TargetDecagon_targets.csv.gz
+      - name: Run functional consequence analysis
+        run: |
+          python analysis/run_biological_consequence_expansion.py \
+            --biosnap data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            --out-prefix results/science_expansion/biological_consequence \
+            --inits 5
+      - name: Upload immutable result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-biological-consequence-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: results/science_expansion/biological_consequence_*
