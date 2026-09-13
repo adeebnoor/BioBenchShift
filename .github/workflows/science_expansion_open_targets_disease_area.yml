@@ -1,0 +1,52 @@
+name: science-expansion-open-targets-disease-area
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - science-expansion-20260913
+    paths:
+      - 'analysis/run_open_targets_disease_area_expansion.py'
+      - 'protocols/OPEN_TARGETS_DISEASE_AREA_AMENDMENT_20260913.md'
+      - '.github/workflows/science_expansion_open_targets_disease_area.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  disease-area:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Download frozen BioSNAP input
+        run: |
+          mkdir -p data/science_expansion results/science_expansion
+          wget --retry-connrefused --waitretry=2 --read-timeout=60 --timeout=60 --tries=5 \
+            -O data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz
+          sha256sum data/science_expansion/ChG-TargetDecagon_targets.csv.gz > results/science_expansion/open_targets_disease_area_inputs.sha256
+      - name: Run disease-area context analysis
+        run: |
+          python analysis/run_open_targets_disease_area_expansion.py \
+            --biosnap data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            --out-prefix results/science_expansion/open_targets_disease_area \
+            --inits 5 \
+            --workers 6
+      - name: Upload immutable result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-open-targets-disease-area-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            results/science_expansion/open_targets_disease_area*
