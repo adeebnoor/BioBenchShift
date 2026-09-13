@@ -1,0 +1,15 @@
+{
+  "protocol": "OPEN_TARGETS_DISEASE_AREA_AMENDMENT_20260913.md",
+  "baseline_commit": "1298e4c83ff4fa488a784d52219d20e706118a9e",
+  "open_targets_endpoint": "https://api.platform.opentargets.org/api/v4/graphql",
+  "open_targets_meta": {"apiVersion": {"x": "26", "y": "6", "z": "3"}, "dataVersion": {"year": "26", "month": "06"}},
+  "gprofiler_convert_endpoint": "https://biit.cs.ut.ee/gprofiler/api/convert/convert/",
+  "requested_open_targets_release": "26.06",
+  "total_unique_queue_targets": 780,
+  "mapped_ensembl_targets": 780,
+  "unique_ensembl_targets_queried": 780,
+  "n_therapeutic_areas": 25,
+  "bootstrap_replicates": 2000,
+  "aggregation": "per target: max direct association score within therapeutic area, normalize target vector to unit mass, equal-weight average across annotated targets",
+  "interpretation_boundary": "Disease-area profiles measure different allocation of attention across Open Targets therapeutic areas; they do not validate individual DTI predictions or establish clinical efficacy."
+}
