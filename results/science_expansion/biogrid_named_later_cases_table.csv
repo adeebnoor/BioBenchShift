@@ -1,0 +1,8 @@
+gene_a,gene_b,symbol_a,symbol_b,svd_rank,neuralmf_rank,lightgcn_rank,neuralmf_score_tie_count,lightgcn_score_tie_count,later_record_count,publication_sources,experimental_systems,experimental_system_types,throughput,biogrid_interaction_ids
+6122,6230,RPL3,RPS25,34,16680,64732,1,0,2,PUBMED:26344197; PUBMED:41387687,Co-fractionation; Cross-Linking-MS (XL-MS),physical,High Throughput,1270922; 3910576
+10413,60,YAP1,ACTB,43,10815,3890,1,1,2,PUBMED:31501420; PUBMED:38537774,Affinity Capture-MS,physical,High Throughput,2753046; 3850025
+333932,8350,HIST2H3A,HIST1H3A,51,21962,20485,1,0,2,PUBMED:35575683; PUBMED:36479438,Cross-Linking-MS (XL-MS),physical,High Throughput,3720353; 3945621
+6156,6223,RPL30,RPS19,57,40920,54806,0,0,2,PUBMED:26344197; PUBMED:41387687,Co-fractionation; Cross-Linking-MS (XL-MS),physical,High Throughput,1269751; 3909905
+3020,8335,H3F3A,HIST1H2AB,66,13294,20748,1,1,4,PUBMED:30021884; PUBMED:35575683; PUBMED:36479438; PUBMED:40593561,Cross-Linking-MS (XL-MS),physical,High Throughput,3720074; 3841712; 3945198; 3947882
+6203,9349,RPS9,RPL23,69,48996,84007,1,0,2,PUBMED:26344197; PUBMED:41387687,Co-fractionation; Cross-Linking-MS (XL-MS),physical,High Throughput,1271426; 3909965
+11224,6191,RPL35,RPS4X,81,23035,67876,0,0,2,PUBMED:26344197; PUBMED:41387687,Co-fractionation; Cross-Linking-MS (XL-MS),physical,High Throughput,1269861; 3909929
