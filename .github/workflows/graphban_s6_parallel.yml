@@ -2,7 +2,7 @@ name: graphban-s6-parallel
 
 on:
   push:
-    branches: [main]
+    branches: [science-expansion-20260913]
     paths:
       - '.github/workflows/graphban_s6_parallel.yml'
       - 'analysis/extract_graphban_features.py'
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   protein-features:
@@ -28,6 +28,8 @@ jobs:
         chunk: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -67,6 +69,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -108,6 +112,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: science-expansion-20260913
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -160,14 +165,14 @@ jobs:
             --out-prefix results/graphban_targetdecagon_clean \
             --seeds 0,1,2
           cat results/graphban_targetdecagon_clean.md
-      - name: Commit frozen S6 result
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add results/graphban_clean_targetdecagon_input.sha256 \
-                  results/graphban_targetdecagon_clean_replicates.csv \
-                  results/graphban_targetdecagon_clean_summary.json \
-                  results/graphban_targetdecagon_clean.md
-          git commit -m 'Freeze leakage-free GraphBAN S6 result [skip ci]'
-          git pull --rebase origin main
-          git push origin HEAD:main
+      - name: Upload immutable S6 result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-graphban-s6-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            results/graphban_clean_targetdecagon_input.sha256
+            results/graphban_targetdecagon_clean_replicates.csv
+            results/graphban_targetdecagon_clean_summary.json
+            results/graphban_targetdecagon_clean.md
