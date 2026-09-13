@@ -17,6 +17,7 @@ Biomedical AI benchmarks do more than measure models: they can change which mode
 - Stability-controlled selected-model ensembles disagree on **100% of DTI top-100** and **99% of PPI top-100** hypotheses, far beyond within-model initialization variability.
 - On the same frozen **70,041,100-pair** historical BioGRID candidate universe, the structure-neutralized-selected model recovers **522** of **5,635** later-added interactions in its top 50,000 predictions, compared with **181** for the conventional winner.
 - In independent ChEMBL 37 evidence, support is more concentrated among the earliest drug–target priorities selected after structural neutralization; the broad-cutoff crossover is retained as an explicit boundary rather than hidden.
+- A prespecified leakage-free GraphBAN-style challenge with ChemBERTa and ESM-1b features retained high absolute performance while remaining benchmark-sensitive: AUROC **0.9972 → 0.9278** and AUPRC **0.9976 → 0.9425** after structural neutralization.
 
 ## Repository layout
 
@@ -57,7 +58,7 @@ The command above rebuilds the four manuscript figures from `figures/source_data
 | Does benchmark-induced model selection change hypothesis identity? | `analysis/run_h5_ensemble_confirmatory.py`, `analysis/run_biogrid_h5_identity.py` | `results/h5b_*`, `results/h5c_*` |
 | Do selected models differ on later evidence? | `analysis/run_biogrid_future_yield.py`, `analysis/run_biogrid_future_uncertainty.py` | `results/h4b_*`, `results/h4c_*` |
 | Does the pattern transfer to an independent DTI evidence source? | `analysis/run_chembl_dti_external.py` | `results/h6_chembl_*` |
-| Does the conclusion survive a contemporary architecture challenge? | `analysis/run_graphban_targetdecagon_clean.py` | frozen S6 output when the prespecified run completes |
+| Does the conclusion survive a contemporary architecture challenge? | `analysis/run_graphban_targetdecagon_clean.py`, `analysis/run_graphban_targetdecagon_precomputed.py` | `results/graphban_targetdecagon_clean*` |
 
 For exact release identifiers, hashes, expected outputs, and commands, see [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) and [`DATA_PROVENANCE.md`](DATA_PROVENANCE.md).
 
@@ -73,11 +74,11 @@ For exact release identifiers, hashes, expected outputs, and commands, see [`REP
 
 BioBenchShift does **not** claim that degree bias is newly discovered, that biomedical AI generally learns no biology, that structural neutralization is universally optimal, that one model family is universally superior, or that later database additions are unbiased biological truth. The tested contribution is narrower and falsifiable: **benchmark design can operate upstream of biomedical discovery by changing model selection and the identity of the hypotheses prioritized for follow-up.**
 
-The independent [`ANTI-DDI`](https://github.com/adeebnoor/ANTI-DDI) repository remains the resource of record for Anti-DDI v3.0.1. BioBenchShift uses that resource only for a supportive evidence-state sensitivity analysis; the principal evidence in this repository is the cross-domain benchmark, hypothesis-identity, temporal BioGRID, and independent ChEMBL analyses.
+The independent [`ANTI-DDI`](https://github.com/adeebnoor/ANTI-DDI) repository remains the resource of record for Anti-DDI v3.0.1. BioBenchShift uses that resource only for a supportive evidence-state sensitivity analysis; the principal evidence in this repository is the cross-domain benchmark, hypothesis-identity, temporal BioGRID, independent ChEMBL, and leakage-free contemporary-model analyses.
 
 ## Status
 
-The core cross-domain, hypothesis-identity, BioGRID temporal, uncertainty, and ChEMBL analyses are frozen. One prespecified leakage-free contemporary-model robustness run is retained as an explicit completion gate; its outcome will be reported regardless of direction.
+All prespecified submission-completion gates are closed. The cross-domain structural audits, learned-model comparisons, stability-controlled hypothesis-identity analyses, BioGRID temporal and uncertainty analyses, ChEMBL external evidence, evidence-state boundary analysis, and leakage-free contemporary GraphBAN-style challenge are frozen for submission.
 
 ## Citation
 
