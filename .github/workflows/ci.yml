@@ -1,0 +1,52 @@
+name: scientific-integrity-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install lightweight verification dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas scipy scikit-learn matplotlib
+
+      - name: Syntax-check analysis code
+        run: python -m compileall -q analysis
+
+      - name: Rebuild main figures from frozen source data
+        run: python analysis/build_science_figures.py
+
+      - name: Verify paper-facing assets
+        run: |
+          test -s paper/manuscript.md
+          test -s paper/supplementary_materials.md
+          test -s paper/cover_letter.md
+          test -s paper/cts_metadata.md
+          test -s figures/source_data_main.csv
+          test -s figures/generated/Figure1_structural_observability.png
+          test -s figures/generated/Figure2_hypothesis_identity.png
+          test -s figures/generated/Figure3_biogrid_future_evidence.png
+          test -s figures/generated/Figure4_chembl_frontier.png
+          test -s protocols/SCIENCE_PROJECT.md
+          test -s protocols/RESULTS_CHECKPOINT_20260913.md
+          test -s CITATION.cff
+
+      - name: Guard against accidental legacy-repository primary links
+        run: |
+          if grep -RIl --exclude='related_work_disclosure.md' --exclude-dir='legacy_workflows' \
+              'github.com/adeebnoor/ANTI-DDI/tree/science-structural-shortcuts' \
+              paper protocols analysis results; then
+            echo 'Found stale legacy Science-branch URL.'
+            exit 1
+          fi
