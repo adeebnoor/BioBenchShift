@@ -1,0 +1,173 @@
+name: graphban-s6-parallel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/graphban_s6_parallel.yml'
+      - 'analysis/extract_graphban_features.py'
+      - 'analysis/combine_graphban_features.py'
+      - 'analysis/run_graphban_targetdecagon_precomputed.py'
+      - 'analysis/run_graphban_targetdecagon_clean.py'
+      - 'protocols/GRAPHBAN_EXECUTION_PARALLELIZATION_20260913.md'
+      - 'results/graphban_targetdecagon_mapping_drug_map.csv'
+      - 'results/graphban_targetdecagon_mapping_gene_map.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  protein-features:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen feature environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1 fair-esm==2.0.0 pandas scipy scikit-learn
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p external_data feature_artifacts
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+      - name: Extract frozen ESM-1b protein chunk
+        env:
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python analysis/extract_graphban_features.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --kind protein --chunk-index ${{ matrix.chunk }} --num-chunks 8 \
+            --out feature_artifacts/protein_chunk_${{ matrix.chunk }}.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: protein-${{ matrix.chunk }}
+          path: feature_artifacts/protein_chunk_${{ matrix.chunk }}.npz
+          if-no-files-found: error
+          retention-days: 7
+
+  drug-features:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen feature environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1 transformers==4.47.0 pandas scipy scikit-learn
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p external_data feature_artifacts
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+      - name: Extract frozen ChemBERTa drug features
+        env:
+          TOKENIZERS_PARALLELISM: 'false'
+        run: |
+          python analysis/extract_graphban_features.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --kind drug --out feature_artifacts/drug_features.npy
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drug-features
+          path: |
+            feature_artifacts/drug_features.npy
+            feature_artifacts/drug_features.npy.order.txt
+          if-no-files-found: error
+          retention-days: 7
+
+  s6-evaluate:
+    if: github.actor != 'github-actions[bot]'
+    needs: [protein-features, drug-features]
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen S6 environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1 pandas scipy scikit-learn requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: protein-*
+          path: feature_artifacts/protein
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: drug-features
+          path: feature_artifacts/drug
+      - name: Acquire and hash frozen TargetDecagon input
+        run: |
+          mkdir -p external_data results feature_artifacts/combined
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz | tee results/graphban_clean_targetdecagon_input.sha256
+      - name: Combine canonical protein features
+        run: |
+          N=$(python - <<'PY'
+          import pandas as pd
+          x=pd.read_csv('results/graphban_targetdecagon_mapping_gene_map.csv',dtype=str).fillna('')
+          x=x[x.sequence.astype(bool)].drop_duplicates('gene')
+          print(len(x))
+          PY
+          )
+          python analysis/combine_graphban_features.py \
+            --chunks feature_artifacts/protein/protein_chunk_*.npz \
+            --n-rows "$N" --out feature_artifacts/combined/protein_features.npy
+      - name: Run unchanged frozen S6 training and dual-regime evaluation
+        env:
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python analysis/run_graphban_targetdecagon_precomputed.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --drug-features feature_artifacts/drug/drug_features.npy \
+            --protein-features feature_artifacts/combined/protein_features.npy \
+            --out-prefix results/graphban_targetdecagon_clean \
+            --seeds 0,1,2
+          cat results/graphban_targetdecagon_clean.md
+      - name: Commit frozen S6 result
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/graphban_clean_targetdecagon_input.sha256 \
+                  results/graphban_targetdecagon_clean_replicates.csv \
+                  results/graphban_targetdecagon_clean_summary.json \
+                  results/graphban_targetdecagon_clean.md
+          git commit -m 'Freeze leakage-free GraphBAN S6 result [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
