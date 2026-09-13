@@ -1,0 +1,35 @@
+name: science-expansion-conditional-static-checks
+
+on:
+  push:
+    branches: [science-expansion-20260913]
+    paths:
+      - 'analysis/run_graphban_conditional_h5.py'
+      - 'analysis/run_graphban_conditional_chembl.py'
+      - '.github/workflows/science_expansion_graphban_conditional.yml'
+      - '.github/workflows/science_expansion_conditional_static_checks.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile conditional runners
+        run: |
+          python -m py_compile \
+            analysis/run_graphban_conditional_h5.py \
+            analysis/run_graphban_conditional_chembl.py
+      - name: Verify frozen protocol and workflow references
+        run: |
+          test -f protocols/GRAPHBAN_CONDITIONAL_H5_CHEMBL_AMENDMENT_20260913.md
+          grep -Fq 'run-id: 34747733830' .github/workflows/science_expansion_graphban_conditional.yml
+          grep -Fq 'ChEMBL_37' analysis/run_graphban_conditional_chembl.py
+          grep -Fq 'GRAPHBAN_SEEDS = (0, 1, 2)' analysis/run_graphban_conditional_h5.py
