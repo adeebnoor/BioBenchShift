@@ -1,0 +1,26 @@
+{
+  "protocol": "SCIENCE_EXPANSION_PROTOCOL_20260913.md",
+  "baseline_commit": "1298e4c83ff4fa488a784d52219d20e706118a9e",
+  "bindingdb_file": "BindingDB_BindingDB_Articles.tsv",
+  "bindingdb_sha256": "3a5153d2d645eaba4e30aa7c9bd67260ec39eb8ee18ec681b46b4d6091f4a813",
+  "biosnap_sha256": "fb4867f90dd8b26383689c9ebce77cd2746475c585a3dff87de83bf0954c69db",
+  "ensemble_initializations": 5,
+  "candidate_universe": 1017342,
+  "bindingdb": {
+    "bindingdb_rows": 93712,
+    "mapped_human_single_protein_rows": 607,
+    "mapped_rows_with_quantitative_measurement": 607,
+    "supported_candidate_pairs_le_1000nM": 11,
+    "supported_candidate_pairs_le_100nM": 2
+  },
+  "confirmatory_SVD_minus_NeuralMF_hits": {
+    "100": {"svd_hits": 0, "neuralmf_hits": 0, "difference": 0},
+    "500": {"svd_hits": 0, "neuralmf_hits": 0, "difference": 0},
+    "1000": {"svd_hits": 0, "neuralmf_hits": 0, "difference": 0},
+    "5000": {"svd_hits": 9, "neuralmf_hits": 0, "difference": 9},
+    "10000": {"svd_hits": 9, "neuralmf_hits": 1, "difference": 8},
+    "50000": {"svd_hits": 9, "neuralmf_hits": 10, "difference": -1}
+  },
+  "named_later_case_studies": 0,
+  "interpretation_boundary": "BindingDB absence is not a negative label; curated biochemical evidence may share literature provenance with other databases despite excluding the BindingDB ChEMBL-import subset."
+}
