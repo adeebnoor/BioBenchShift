@@ -2,8 +2,19 @@
   "protocol": "OPEN_TARGETS_DISEASE_AREA_AMENDMENT_20260913.md",
   "baseline_commit": "1298e4c83ff4fa488a784d52219d20e706118a9e",
   "open_targets_endpoint": "https://api.platform.opentargets.org/api/v4/graphql",
-  "open_targets_meta": {"apiVersion": {"x": "26", "y": "6", "z": "3"}, "dataVersion": {"year": "26", "month": "06"}},
+  "open_targets_meta": {
+    "apiVersion": {
+      "x": "26",
+      "y": "6",
+      "z": "3"
+    },
+    "dataVersion": {
+      "year": "26",
+      "month": "06"
+    }
+  },
   "gprofiler_convert_endpoint": "https://biit.cs.ut.ee/gprofiler/api/convert/convert/",
+  "gprofiler_meta": {},
   "requested_open_targets_release": "26.06",
   "total_unique_queue_targets": 780,
   "mapped_ensembl_targets": 780,

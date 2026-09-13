@@ -1,0 +1,151 @@
+model,k,therapeutic_area_id,therapeutic_area_name,mass
+SVD,100,EFO_0000651,phenotype,0.077598586988602
+SVD,100,EFO_0002571,medical procedure,0.010523013537975216
+SVD,100,EFO_0010282,gastrointestinal disease,0.04519239912703582
+SVD,100,GO_0008150,biological_process,0.033205217548617445
+SVD,100,MONDO_0002025,psychiatric disorder,0.03736036696665768
+SVD,100,MONDO_0002051,integumentary system disorder,0.03514797343888096
+SVD,100,MONDO_0002118,urinary system disorder,0.035523451964559034
+SVD,100,MONDO_0002515,hepatobiliary disorder,0.02558088365136912
+SVD,100,MONDO_0004995,cardiovascular disorder,0.05191377953095772
+SVD,100,MONDO_0005046,immune system disorder,0.0562288077714672
+SVD,100,MONDO_0005071,nervous system disorder,0.0880489422769964
+SVD,100,MONDO_0005151,endocrine system disorder,0.050299279870513636
+SVD,100,MONDO_0005550,infectious disease,0.03262442172587936
+SVD,100,MONDO_0005570,hematologic disorder,0.03565052252345743
+SVD,100,MONDO_0005583,non-human animal disease,0.00024340364490357035
+SVD,100,MONDO_0021205,disorder of ear,0.006482852394389839
+SVD,100,MONDO_0024458,disorder of visual system,0.03087902577139147
+SVD,100,MONDO_0045024,cancer or benign tumor,0.05343396711291078
+SVD,100,OTAR_0000006,musculoskeletal or connective tissue disease,0.051365456845841366
+SVD,100,OTAR_0000009,"injury, poisoning or other complication",0.017184787026912285
+SVD,100,OTAR_0000010,respiratory or thoracic disease,0.03743007309497204
+SVD,100,OTAR_0000014,pregnancy or perinatal disease,0.01617034546537806
+SVD,100,OTAR_0000017,reproductive system or breast disease,0.04741693215063474
+SVD,100,OTAR_0000018,"genetic, familial or congenital disease",0.08404422516513861
+SVD,100,OTAR_0000020,nutritional or metabolic disease,0.04045128440455834
+NeuralMF,100,EFO_0000651,phenotype,0.07514332781332297
+NeuralMF,100,EFO_0002571,medical procedure,0.0140012757511746
+NeuralMF,100,EFO_0010282,gastrointestinal disease,0.05813922356985042
+NeuralMF,100,GO_0008150,biological_process,0.029566078930112726
+NeuralMF,100,MONDO_0002025,psychiatric disorder,0.043311895710335585
+NeuralMF,100,MONDO_0002051,integumentary system disorder,0.04451017801180899
+NeuralMF,100,MONDO_0002118,urinary system disorder,0.03153317463359198
+NeuralMF,100,MONDO_0002515,hepatobiliary disorder,0.027533677456981095
+NeuralMF,100,MONDO_0004995,cardiovascular disorder,0.05177817418791489
+NeuralMF,100,MONDO_0005046,immune system disorder,0.0420230317722317
+NeuralMF,100,MONDO_0005071,nervous system disorder,0.08688777142038949
+NeuralMF,100,MONDO_0005151,endocrine system disorder,0.049521250663319055
+NeuralMF,100,MONDO_0005550,infectious disease,0.03369462483640328
+NeuralMF,100,MONDO_0005570,hematologic disorder,0.02925650349700499
+NeuralMF,100,MONDO_0005583,non-human animal disease,0.0002090011279044177
+NeuralMF,100,MONDO_0021205,disorder of ear,0.007672712939031343
+NeuralMF,100,MONDO_0024458,disorder of visual system,0.03701730211696455
+NeuralMF,100,MONDO_0045024,cancer or benign tumor,0.045769269530542445
+NeuralMF,100,OTAR_0000006,musculoskeletal or connective tissue disease,0.04408588683671292
+NeuralMF,100,OTAR_0000009,"injury, poisoning or other complication",0.025269539931865023
+NeuralMF,100,OTAR_0000010,respiratory or thoracic disease,0.03696023640330529
+NeuralMF,100,OTAR_0000014,pregnancy or perinatal disease,0.0165317659364759
+NeuralMF,100,OTAR_0000017,reproductive system or breast disease,0.04067191843622459
+NeuralMF,100,OTAR_0000018,"genetic, familial or congenital disease",0.07904002740995465
+NeuralMF,100,OTAR_0000020,nutritional or metabolic disease,0.04987215107657717
+SVD,500,EFO_0000651,phenotype,0.08562207290043451
+SVD,500,EFO_0002571,medical procedure,0.007099890517805373
+SVD,500,EFO_0010282,gastrointestinal disease,0.0509474904875805
+SVD,500,GO_0008150,biological_process,0.030924315661556023
+SVD,500,MONDO_0002025,psychiatric disorder,0.039310909069813486
+SVD,500,MONDO_0002051,integumentary system disorder,0.034136811230782924
+SVD,500,MONDO_0002118,urinary system disorder,0.03384171365635394
+SVD,500,MONDO_0002515,hepatobiliary disorder,0.02731137591681452
+SVD,500,MONDO_0004995,cardiovascular disorder,0.05124706910497155
+SVD,500,MONDO_0005046,immune system disorder,0.05001871379912298
+SVD,500,MONDO_0005071,nervous system disorder,0.09384491374637624
+SVD,500,MONDO_0005151,endocrine system disorder,0.05122401905252397
+SVD,500,MONDO_0005550,infectious disease,0.029713225957595037
+SVD,500,MONDO_0005570,hematologic disorder,0.028928540721905774
+SVD,500,MONDO_0005583,non-human animal disease,0.00038607377136790994
+SVD,500,MONDO_0021205,disorder of ear,0.0048261581624445046
+SVD,500,MONDO_0024458,disorder of visual system,0.031155258308262455
+SVD,500,MONDO_0045024,cancer or benign tumor,0.04804073898015164
+SVD,500,OTAR_0000006,musculoskeletal or connective tissue disease,0.046498943312874366
+SVD,500,OTAR_0000009,"injury, poisoning or other complication",0.017696156885970184
+SVD,500,OTAR_0000010,respiratory or thoracic disease,0.03367560691919406
+SVD,500,OTAR_0000014,pregnancy or perinatal disease,0.01614724141819354
+SVD,500,OTAR_0000017,reproductive system or breast disease,0.044774790675292095
+SVD,500,OTAR_0000018,"genetic, familial or congenital disease",0.08962276515119842
+SVD,500,OTAR_0000020,nutritional or metabolic disease,0.05300520459141408
+NeuralMF,500,EFO_0000651,phenotype,0.08184047584815927
+NeuralMF,500,EFO_0002571,medical procedure,0.005946446290981131
+NeuralMF,500,EFO_0010282,gastrointestinal disease,0.04976155815946512
+NeuralMF,500,GO_0008150,biological_process,0.02633278443085473
+NeuralMF,500,MONDO_0002025,psychiatric disorder,0.033604744834299725
+NeuralMF,500,MONDO_0002051,integumentary system disorder,0.03422549419826592
+NeuralMF,500,MONDO_0002118,urinary system disorder,0.031918596832392634
+NeuralMF,500,MONDO_0002515,hepatobiliary disorder,0.027324110525508465
+NeuralMF,500,MONDO_0004995,cardiovascular disorder,0.04549945359512916
+NeuralMF,500,MONDO_0005046,immune system disorder,0.0515865742406603
+NeuralMF,500,MONDO_0005071,nervous system disorder,0.09931882601247352
+NeuralMF,500,MONDO_0005151,endocrine system disorder,0.04785834573706151
+NeuralMF,500,MONDO_0005550,infectious disease,0.03628818323869416
+NeuralMF,500,MONDO_0005570,hematologic disorder,0.03451430056150625
+NeuralMF,500,MONDO_0005583,non-human animal disease,0.00030768566862595737
+NeuralMF,500,MONDO_0021205,disorder of ear,0.00649325051794867
+NeuralMF,500,MONDO_0024458,disorder of visual system,0.028543931215099603
+NeuralMF,500,MONDO_0045024,cancer or benign tumor,0.055130258932336994
+NeuralMF,500,OTAR_0000006,musculoskeletal or connective tissue disease,0.052551631230852845
+NeuralMF,500,OTAR_0000009,"injury, poisoning or other complication",0.01704654483798176
+NeuralMF,500,OTAR_0000010,respiratory or thoracic disease,0.04114210403324997
+NeuralMF,500,OTAR_0000014,pregnancy or perinatal disease,0.015214560959884334
+NeuralMF,500,OTAR_0000017,reproductive system or breast disease,0.043073925824893194
+NeuralMF,500,OTAR_0000018,"genetic, familial or congenital disease",0.08567396277727242
+NeuralMF,500,OTAR_0000020,nutritional or metabolic disease,0.04880224949640241
+SVD,1000,EFO_0000651,phenotype,0.08657032885389057
+SVD,1000,EFO_0002571,medical procedure,0.00685884777153463
+SVD,1000,EFO_0010282,gastrointestinal disease,0.054209634651775404
+SVD,1000,GO_0008150,biological_process,0.030476590899078462
+SVD,1000,MONDO_0002025,psychiatric disorder,0.04035998061368549
+SVD,1000,MONDO_0002051,integumentary system disorder,0.03776735495921246
+SVD,1000,MONDO_0002118,urinary system disorder,0.03410685234391623
+SVD,1000,MONDO_0002515,hepatobiliary disorder,0.026497904719252334
+SVD,1000,MONDO_0004995,cardiovascular disorder,0.05041538357013099
+SVD,1000,MONDO_0005046,immune system disorder,0.045646082067439926
+SVD,1000,MONDO_0005071,nervous system disorder,0.09092849764798341
+SVD,1000,MONDO_0005151,endocrine system disorder,0.052769477662127466
+SVD,1000,MONDO_0005550,infectious disease,0.02892424517751374
+SVD,1000,MONDO_0005570,hematologic disorder,0.027451984975937076
+SVD,1000,MONDO_0005583,non-human animal disease,0.0003551907156514908
+SVD,1000,MONDO_0021205,disorder of ear,0.00561252265544058
+SVD,1000,MONDO_0024458,disorder of visual system,0.03277548617625191
+SVD,1000,MONDO_0045024,cancer or benign tumor,0.04863154666770501
+SVD,1000,OTAR_0000006,musculoskeletal or connective tissue disease,0.047287734285422524
+SVD,1000,OTAR_0000009,"injury, poisoning or other complication",0.016492719202286097
+SVD,1000,OTAR_0000010,respiratory or thoracic disease,0.03520911447649043
+SVD,1000,OTAR_0000014,pregnancy or perinatal disease,0.015889347982664278
+SVD,1000,OTAR_0000017,reproductive system or breast disease,0.04350159349047148
+SVD,1000,OTAR_0000018,"genetic, familial or congenital disease",0.08860573805821265
+SVD,1000,OTAR_0000020,nutritional or metabolic disease,0.052655840375925536
+NeuralMF,1000,EFO_0000651,phenotype,0.08483251420014754
+NeuralMF,1000,EFO_0002571,medical procedure,0.005767688078520872
+NeuralMF,1000,EFO_0010282,gastrointestinal disease,0.05052091628351208
+NeuralMF,1000,GO_0008150,biological_process,0.02805628341423696
+NeuralMF,1000,MONDO_0002025,psychiatric disorder,0.03694205991603193
+NeuralMF,1000,MONDO_0002051,integumentary system disorder,0.03301756451914557
+NeuralMF,1000,MONDO_0002118,urinary system disorder,0.030716599705091763
+NeuralMF,1000,MONDO_0002515,hepatobiliary disorder,0.026772555246251866
+NeuralMF,1000,MONDO_0004995,cardiovascular disorder,0.04482556893328899
+NeuralMF,1000,MONDO_0005046,immune system disorder,0.05061825394192849
+NeuralMF,1000,MONDO_0005071,nervous system disorder,0.10262272867883392
+NeuralMF,1000,MONDO_0005151,endocrine system disorder,0.04844473819128168
+NeuralMF,1000,MONDO_0005550,infectious disease,0.03391159518463095
+NeuralMF,1000,MONDO_0005570,hematologic disorder,0.031883752732596665
+NeuralMF,1000,MONDO_0005583,non-human animal disease,0.0002940727849801397
+NeuralMF,1000,MONDO_0021205,disorder of ear,0.0057207622337531825
+NeuralMF,1000,MONDO_0024458,disorder of visual system,0.028936055875008856
+NeuralMF,1000,MONDO_0045024,cancer or benign tumor,0.05353766153575008
+NeuralMF,1000,OTAR_0000006,musculoskeletal or connective tissue disease,0.0510094437694106
+NeuralMF,1000,OTAR_0000009,"injury, poisoning or other complication",0.015373609670240904
+NeuralMF,1000,OTAR_0000010,respiratory or thoracic disease,0.039860538188000255
+NeuralMF,1000,OTAR_0000014,pregnancy or perinatal disease,0.014770707196666467
+NeuralMF,1000,OTAR_0000017,reproductive system or breast disease,0.0432090780318803
+NeuralMF,1000,OTAR_0000018,"genetic, familial or congenital disease",0.0888854512480323
+NeuralMF,1000,OTAR_0000020,nutritional or metabolic disease,0.04946980044077779
