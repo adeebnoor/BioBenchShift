@@ -1,0 +1,65 @@
+name: materialize-science-s14
+
+on:
+  push:
+    branches: [science-expansion-20260913]
+    paths:
+      - '.github/workflows/materialize_science_s14.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  s14:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Download frozen BioSNAP input
+        run: |
+          mkdir -p data/science_expansion results/science_expansion
+          wget --retry-connrefused --waitretry=2 --read-timeout=60 --timeout=60 --tries=5 \
+            -O data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz
+          sha256sum data/science_expansion/ChG-TargetDecagon_targets.csv.gz > results/science_expansion/open_targets_disease_area_inputs.sha256
+      - name: Rebuild frozen Open Targets 26.06 context
+        run: |
+          python analysis/run_open_targets_disease_area_expansion.py \
+            --biosnap data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            --out-prefix results/science_expansion/open_targets_disease_area \
+            --inits 5 --workers 6
+      - name: Build per-area bootstrap distributions
+        run: |
+          python analysis/build_open_targets_area_bootstrap_s14.py \
+            --target-vectors results/science_expansion/open_targets_disease_area_target_vectors.csv \
+            --profiles results/science_expansion/open_targets_disease_area_profiles.csv \
+            --out-prefix results/science_expansion/open_targets_area_bootstrap_s14
+      - name: Commit Table S14 source outputs
+        run: |
+          git config user.name "BioBenchShift CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add results/science_expansion/open_targets_disease_area_inputs.sha256 \
+                  results/science_expansion/open_targets_disease_area_mapping.csv \
+                  results/science_expansion/open_targets_disease_area_profiles.csv \
+                  results/science_expansion/open_targets_disease_area_summary.csv \
+                  results/science_expansion/open_targets_disease_area_target_vectors.csv \
+                  results/science_expansion/open_targets_disease_area_metadata.json \
+                  results/science_expansion/open_targets_area_bootstrap_s14_summary.csv \
+                  results/science_expansion/open_targets_area_bootstrap_s14_draws.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Materialize Open Targets per-area bootstrap source data for Table S14"
+            git push origin HEAD:science-expansion-20260913
+          fi
