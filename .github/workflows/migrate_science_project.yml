@@ -25,9 +25,9 @@ jobs:
 
       - name: Create Science-grade repository layout
         run: |
-          mkdir -p analysis results figures paper/generated protocols .github/workflows
+          mkdir -p analysis results figures paper/generated protocols protocols/legacy_workflows
 
-          # Executable paper analyses and frozen outputs.
+          # Executable paper analyses and all frozen Science-branch outputs.
           rsync -a /tmp/legacy/analysis/ analysis/
           rsync -a /tmp/legacy/results/ results/
           rsync -a /tmp/legacy/figures/ figures/
@@ -46,46 +46,26 @@ jobs:
 
           # Prespecification, provenance, novelty and submission strategy.
           for f in \
-            SCIENCE_PROJECT.md \
-            RESULTS_CHECKPOINT_20260913.md \
-            SCIENCE_SEND_DECISION.md \
-            SCIENCE_SUBMISSION_STRATEGY_20260913.md \
-            SCIENCE_LATEST_ARTICLE_ALIGNMENT_20260913.md \
-            SCIENCE_EDITORIAL_SCREEN_PLAYBOOK_20260913.md \
-            LITERATURE_GAP.md \
-            BENCHMARK_MANIFEST.md \
-            CHECKSUMS.sha256 \
-            CONTEMPORARY_MODEL_CHALLENGE.md \
-            EVIDENCE_STATE_OVERLAP_PROTOCOL.md \
-            EXTERNAL_DTI_CHEMBL_PROTOCOL.md \
-            GRAPHBAN_AUDIT_PROTOCOL.md \
-            GRAPHBAN_PROTOCOL_AMENDMENT_20260913.md \
-            RIDI_INTEGRATION.md; do
-            if [ -f "/tmp/legacy/$f" ]; then cp "/tmp/legacy/$f" protocols/; fi
+            SCIENCE_PROJECT.md RESULTS_CHECKPOINT_20260913.md SCIENCE_SEND_DECISION.md \
+            SCIENCE_SUBMISSION_STRATEGY_20260913.md SCIENCE_LATEST_ARTICLE_ALIGNMENT_20260913.md \
+            SCIENCE_EDITORIAL_SCREEN_PLAYBOOK_20260913.md LITERATURE_GAP.md BENCHMARK_MANIFEST.md \
+            CHECKSUMS.sha256 CONTEMPORARY_MODEL_CHALLENGE.md EVIDENCE_STATE_OVERLAP_PROTOCOL.md \
+            EXTERNAL_DTI_CHEMBL_PROTOCOL.md GRAPHBAN_AUDIT_PROTOCOL.md \
+            GRAPHBAN_PROTOCOL_AMENDMENT_20260913.md RIDI_INTEGRATION.md; do
+            [ -f "/tmp/legacy/$f" ] && cp "/tmp/legacy/$f" protocols/
           done
 
-          # Science-relevant reproducibility workflows only.
-          for pattern in \
-            'gate1_*.yml' 'gate2_*.yml' 'h4*.yml' 'h5*.yml' 'h6_*.yml' \
-            'graphban_*.yml' 'probe_biogrid_temporal.yml' \
-            'probe_chembl_dti_external.yml'; do
-            for f in /tmp/legacy/.github/workflows/$pattern; do
-              [ -f "$f" ] && cp "$f" .github/workflows/
-            done
-          done
+          # Preserve every legacy Science workflow as provenance without trying to
+          # install workflows through GITHUB_TOKEN (GitHub blocks that by design).
+          rsync -a /tmp/legacy/.github/workflows/ protocols/legacy_workflows/
 
-          # Preserve the submission package builder but adapt its paths/repository branch.
-          cp /tmp/legacy/.github/workflows/build_science_submission_package.yml \
-             .github/workflows/build_submission_package.yml
-
-          # Retain code/data licensing terms from the legacy research line.
           cp /tmp/legacy/LICENSE LICENSE
 
       - name: Rewrite legacy repository references
         run: |
           python - <<'PY'
           from pathlib import Path
-          roots = [Path('paper'), Path('protocols'), Path('analysis'), Path('results'), Path('.github/workflows')]
+          roots = [Path('paper'), Path('protocols'), Path('analysis'), Path('results')]
           replacements = {
               'https://github.com/adeebnoor/ANTI-DDI/tree/science-structural-shortcuts': 'https://github.com/adeebnoor/BioBenchShift',
               'https://github.com/adeebnoor/ANTI-DDI': 'https://github.com/adeebnoor/BioBenchShift',
@@ -98,17 +78,13 @@ jobs:
           }
           exts = {'.md','.py','.yml','.yaml','.json','.cff','.txt','.csv','.sha256'}
           for root in roots:
-              if not root.exists():
-                  continue
+              if not root.exists(): continue
               for p in root.rglob('*'):
-                  if not p.is_file() or p.suffix.lower() not in exts:
-                      continue
-                  try:
-                      s = p.read_text(encoding='utf-8')
-                  except UnicodeDecodeError:
-                      continue
-                  old = s
-                  for a,b in replacements.items(): s = s.replace(a,b)
+                  if not p.is_file() or p.suffix.lower() not in exts: continue
+                  try: s = p.read_text(encoding='utf-8')
+                  except UnicodeDecodeError: continue
+                  old=s
+                  for a,b in replacements.items(): s=s.replace(a,b)
                   if s != old: p.write_text(s, encoding='utf-8')
           PY
 
@@ -164,58 +140,10 @@ jobs:
           }
           EOF
 
-      - name: Add BioBenchShift CI
-        run: |
-          cat > .github/workflows/ci.yml <<'EOF'
-          name: ci
-          on:
-            push:
-            pull_request:
-          jobs:
-            smoke:
-              runs-on: ubuntu-latest
-              steps:
-                - uses: actions/checkout@v4
-                - uses: actions/setup-python@v5
-                  with:
-                    python-version: '3.11'
-                - run: python -m pip install --upgrade pip
-                - run: pip install pandas matplotlib numpy scipy scikit-learn
-                - name: Syntax check analysis scripts
-                  run: python -m compileall -q analysis
-                - name: Build main figures
-                  run: python analysis/build_science_figures.py
-                - name: Verify paper package
-                  run: |
-                    test -s paper/manuscript.md
-                    test -s paper/supplementary_materials.md
-                    test -s figures/source_data_main.csv
-                    test -s figures/generated/Figure1_structural_observability.png
-                    test -s figures/generated/Figure4_chembl_frontier.png
-          EOF
-
-      - name: Fix submission builder for BioBenchShift layout
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('.github/workflows/build_submission_package.yml')
-          s=p.read_text()
-          s=s.replace("branches:\n      - main", "branches:\n      - main")
-          s=s.replace("manuscript/SCIENCE_MANUSCRIPT_v0.7_PRE_SUBMISSION.md", "paper/manuscript.md")
-          s=s.replace("submission/SCIENCE_SUPPLEMENTARY_MATERIALS.md", "paper/supplementary_materials.md")
-          s=s.replace("submission/SCIENCE_COVER_LETTER.md", "paper/cover_letter.md")
-          s=s.replace("submission/generated", "paper/generated")
-          s=s.replace("--resource-path=manuscript:figures/generated:.", "--resource-path=paper:figures/generated:.")
-          s=s.replace("submission/SCIENCE_CTS_METADATA.md", "paper/cts_metadata.md")
-          s=s.replace("submission/RELATED_WORK_DISCLOSURE.md", "paper/related_work_disclosure.md")
-          s=s.replace("submission/FILE_MANIFEST.md", "paper/file_manifest.md")
-          p.write_text(s)
-          PY
-
-      - name: Commit migrated project
+      - name: Commit migrated scientific project
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add analysis results figures paper protocols CITATION.cff .zenodo.json LICENSE
           git commit -m 'Migrate Science project into standalone BioBenchShift repository'
           git push origin main
