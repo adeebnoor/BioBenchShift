@@ -1,0 +1,95 @@
+name: science-expansion-bindingdb
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - science-expansion-20260913
+    paths:
+      - 'analysis/run_bindingdb_external.py'
+      - 'protocols/SCIENCE_EXPANSION_PROTOCOL_20260913.md'
+      - '.github/workflows/science_expansion_bindingdb.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  bindingdb-external-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout expansion branch
+        uses: actions/checkout@v4
+        with:
+          ref: science-expansion-20260913
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install reproducibility environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download frozen public inputs
+        run: |
+          mkdir -p data/science_expansion/bindingdb
+          wget --retry-connrefused --waitretry=2 --read-timeout=60 --timeout=60 --tries=5 \
+            -O data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz
+          wget --retry-connrefused --waitretry=2 --read-timeout=120 --timeout=120 --tries=5 \
+            -O data/science_expansion/BindingDB_BindingDB_Articles_202609_tsv.zip \
+            https://www.bindingdb.org/rwd/bind/downloads/BindingDB_BindingDB_Articles_202609_tsv.zip
+          sha256sum data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+                    data/science_expansion/BindingDB_BindingDB_Articles_202609_tsv.zip \
+                    | tee data/science_expansion/DOWNLOAD_CHECKSUMS.sha256
+          unzip -o data/science_expansion/BindingDB_BindingDB_Articles_202609_tsv.zip \
+            -d data/science_expansion/bindingdb
+          find data/science_expansion/bindingdb -maxdepth 2 -type f -ls
+
+      - name: Run preregistered BindingDB analysis
+        run: |
+          BDB_TSV=$(find data/science_expansion/bindingdb -type f -name '*.tsv' | head -n 1)
+          test -n "$BDB_TSV"
+          mkdir -p results/science_expansion
+          python analysis/run_bindingdb_external.py \
+            --biosnap data/science_expansion/ChG-TargetDecagon_targets.csv.gz \
+            --bindingdb "$BDB_TSV" \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --out-prefix results/science_expansion/bindingdb_external \
+            --inits 5
+
+      - name: Preserve input checksums and execution metadata
+        run: |
+          cp data/science_expansion/DOWNLOAD_CHECKSUMS.sha256 results/science_expansion/
+          {
+            echo "branch=science-expansion-20260913"
+            echo "baseline_commit=1298e4c83ff4fa488a784d52219d20e706118a9e"
+            echo "runner_os=${RUNNER_OS}"
+            python --version
+            pip freeze
+          } > results/science_expansion/EXECUTION_ENVIRONMENT.txt
+
+      - name: Upload immutable run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-expansion-bindingdb-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            results/science_expansion/*
+
+      - name: Commit expansion results to branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/science_expansion
+          if git diff --cached --quiet; then
+            echo 'No result changes to commit.'
+          else
+            git commit -m 'Record preregistered BindingDB external validation'
+            git push origin HEAD:science-expansion-20260913
+          fi
