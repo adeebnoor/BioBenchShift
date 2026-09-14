@@ -1,0 +1,109 @@
+{
+  "chembl_version": "ChEMBL_37",
+  "edge_count_full": 18690,
+  "edge_count_mapped": 18631,
+  "mapping_fraction": 0.9968432316746924,
+  "candidate_universe_size": 1005757,
+  "evidence_meta": {
+    "n_mapped_molecules": 264,
+    "n_mapped_targets_raw": 1860,
+    "n_eligible_single_protein_human_targets": 1774,
+    "n_activities_pchembl_ge_6_on_mapped_targets": 9409,
+    "n_good_binding_conf9_assays": 4581,
+    "n_supported_candidate_pairs_pchembl_ge_6": 61,
+    "n_supported_candidate_pairs_pchembl_ge_7": 22,
+    "n_supported_candidate_pairs_exact_relation_ge_6": 61
+  },
+  "supported_primary": 61,
+  "supported_strict": 22,
+  "ensemble_fits_per_model": 5,
+  "selected_model_conventional": "GraphBAN",
+  "selected_model_neutralized": "GraphBAN",
+  "benchmark_induced_model_switch": false,
+  "graphban_training_seeds": [
+    91000,
+    91001,
+    91002,
+    91003,
+    91004
+  ],
+  "graphban_loo_turnover": {
+    "100": {
+      "mean": 0.16999999999999998,
+      "max": 0.28,
+      "values": [
+        0.19999999999999996,
+        0.050000000000000044,
+        0.10999999999999999,
+        0.28,
+        0.20999999999999996
+      ]
+    },
+    "500": {
+      "mean": 0.11480000000000001,
+      "max": 0.14400000000000002,
+      "values": [
+        0.128,
+        0.124,
+        0.06000000000000005,
+        0.118,
+        0.14400000000000002
+      ]
+    },
+    "1000": {
+      "mean": 0.10499999999999998,
+      "max": 0.128,
+      "values": [
+        0.128,
+        0.10699999999999998,
+        0.06399999999999995,
+        0.10599999999999998,
+        0.12
+      ]
+    }
+  },
+  "graphban_primary": [
+    {
+      "k": 100,
+      "hits": 2,
+      "precision_lower_bound": 0.02,
+      "recall_supported": 0.03278688524590164,
+      "enrichment_uniform": 329.75639344262294
+    },
+    {
+      "k": 500,
+      "hits": 2,
+      "precision_lower_bound": 0.004,
+      "recall_supported": 0.03278688524590164,
+      "enrichment_uniform": 65.9512786885246
+    },
+    {
+      "k": 1000,
+      "hits": 4,
+      "precision_lower_bound": 0.004,
+      "recall_supported": 0.06557377049180328,
+      "enrichment_uniform": 65.9512786885246
+    },
+    {
+      "k": 5000,
+      "hits": 12,
+      "precision_lower_bound": 0.0024,
+      "recall_supported": 0.19672131147540983,
+      "enrichment_uniform": 39.57076721311475
+    },
+    {
+      "k": 10000,
+      "hits": 13,
+      "precision_lower_bound": 0.0013,
+      "recall_supported": 0.21311475409836064,
+      "enrichment_uniform": 21.43416557377049
+    },
+    {
+      "k": 50000,
+      "hits": 24,
+      "precision_lower_bound": 0.00048,
+      "recall_supported": 0.39344262295081966,
+      "enrichment_uniform": 7.914153442622951
+    }
+  ]
+}
