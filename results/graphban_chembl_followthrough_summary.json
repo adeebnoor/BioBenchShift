@@ -1,0 +1,154 @@
+{
+  "benchmark": "BioSNAP TargetDecagon DTI - fair GraphBAN-mapped universe",
+  "chembl_version": "ChEMBL_37",
+  "edge_count_full": 18690,
+  "edge_count_mapped": 18631,
+  "mapping_fraction": 0.9968432316746924,
+  "candidate_universe_size": 1005757,
+  "ensemble_fits_per_model": 5,
+  "selected_model_conventional": "GraphBAN",
+  "selected_model_neutralized": "GraphBAN",
+  "benchmark_induced_model_switch": false,
+  "graphban_training_seeds": [
+    91000,
+    91001,
+    91002,
+    91003,
+    91004
+  ],
+  "graphban_loo_turnover": {
+    "100": {
+      "mean": 0.13599999999999998,
+      "max": 0.25,
+      "values": [
+        0.25,
+        0.12,
+        0.06999999999999995,
+        0.07999999999999996,
+        0.16000000000000003
+      ]
+    },
+    "500": {
+      "mean": 0.10519999999999999,
+      "max": 0.16800000000000004,
+      "values": [
+        0.16800000000000004,
+        0.10999999999999999,
+        0.07999999999999996,
+        0.07199999999999995,
+        0.09599999999999997
+      ]
+    },
+    "1000": {
+      "mean": 0.09519999999999999,
+      "max": 0.124,
+      "values": [
+        0.09999999999999998,
+        0.11699999999999999,
+        0.062000000000000055,
+        0.07299999999999995,
+        0.124
+      ]
+    }
+  },
+  "evidence_meta": {
+    "n_mapped_molecules": 264,
+    "n_mapped_targets_raw": 1860,
+    "n_eligible_single_protein_human_targets": 1774,
+    "n_activities_pchembl_ge_6_on_mapped_targets": 9409,
+    "n_good_binding_conf9_assays": 4581,
+    "n_supported_candidate_pairs_pchembl_ge_6": 61,
+    "n_supported_candidate_pairs_pchembl_ge_7": 22,
+    "n_supported_candidate_pairs_exact_relation_ge_6": 61
+  },
+  "supported_pairs_primary_in_ranked_universe": 61,
+  "supported_pairs_strict_in_ranked_universe": 22,
+  "graphban_primary": [
+    {
+      "k": 100,
+      "hits": 0,
+      "precision_lower_bound": 0.0,
+      "recall_supported": 0.0,
+      "enrichment_uniform": 0.0
+    },
+    {
+      "k": 500,
+      "hits": 2,
+      "precision_lower_bound": 0.004,
+      "recall_supported": 0.03278688524590164,
+      "enrichment_uniform": 65.9512786885246
+    },
+    {
+      "k": 1000,
+      "hits": 4,
+      "precision_lower_bound": 0.004,
+      "recall_supported": 0.06557377049180328,
+      "enrichment_uniform": 65.9512786885246
+    },
+    {
+      "k": 5000,
+      "hits": 11,
+      "precision_lower_bound": 0.0022,
+      "recall_supported": 0.18032786885245902,
+      "enrichment_uniform": 36.27320327868853
+    },
+    {
+      "k": 10000,
+      "hits": 12,
+      "precision_lower_bound": 0.0012,
+      "recall_supported": 0.19672131147540983,
+      "enrichment_uniform": 19.785383606557374
+    },
+    {
+      "k": 50000,
+      "hits": 26,
+      "precision_lower_bound": 0.00052,
+      "recall_supported": 0.4262295081967213,
+      "enrichment_uniform": 8.573666229508197
+    }
+  ],
+  "graphban_strict": [
+    {
+      "k": 100,
+      "hits": 0,
+      "precision_lower_bound": 0.0,
+      "recall_supported": 0.0,
+      "enrichment_uniform": 0.0
+    },
+    {
+      "k": 500,
+      "hits": 1,
+      "precision_lower_bound": 0.002,
+      "recall_supported": 0.045454545454545456,
+      "enrichment_uniform": 91.43245454545455
+    },
+    {
+      "k": 1000,
+      "hits": 1,
+      "precision_lower_bound": 0.001,
+      "recall_supported": 0.045454545454545456,
+      "enrichment_uniform": 45.716227272727274
+    },
+    {
+      "k": 5000,
+      "hits": 2,
+      "precision_lower_bound": 0.0004,
+      "recall_supported": 0.09090909090909091,
+      "enrichment_uniform": 18.286490909090908
+    },
+    {
+      "k": 10000,
+      "hits": 3,
+      "precision_lower_bound": 0.0003,
+      "recall_supported": 0.13636363636363635,
+      "enrichment_uniform": 13.714868181818181
+    },
+    {
+      "k": 50000,
+      "hits": 9,
+      "precision_lower_bound": 0.00018,
+      "recall_supported": 0.4090909090909091,
+      "enrichment_uniform": 8.22892090909091
+    }
+  ]
+}
