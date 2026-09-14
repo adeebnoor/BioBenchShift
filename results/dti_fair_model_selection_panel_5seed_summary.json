@@ -1,0 +1,69 @@
+{
+  "benchmark": "BioSNAP TargetDecagon DTI mapped GraphBAN universe",
+  "edge_count_full": 18690,
+  "edge_count_mapped": 18631,
+  "mapping_fraction": 0.9968432316746924,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "match_fraction_mean": 0.5918196963279627,
+  "winner_random": "graphban",
+  "winner_matched": "graphban",
+  "winner_reversal": false,
+  "seedwise_winners_random": [
+    "graphban",
+    "neuralmf",
+    "graphban",
+    "graphban",
+    "graphban"
+  ],
+  "seedwise_winners_matched": [
+    "graphban",
+    "svd",
+    "graphban",
+    "graphban",
+    "graphban"
+  ],
+  "models": [
+    {
+      "model": "svd",
+      "auc_random_mean": 0.9506267484635039,
+      "auc_random_sd": 0.005518337389169945,
+      "auc_matched_mean": 0.9150383834172068,
+      "auc_matched_sd": 0.006032223878337995,
+      "auprc_random_mean": 0.9727200286083619,
+      "auprc_matched_mean": 0.9357439749084691
+    },
+    {
+      "model": "neuralmf",
+      "auc_random_mean": 0.996493471276818,
+      "auc_random_sd": 0.0009539668390004491,
+      "auc_matched_mean": 0.9072165533604121,
+      "auc_matched_sd": 0.004598078340108818,
+      "auprc_random_mean": 0.9957683658373153,
+      "auprc_matched_mean": 0.8866281216248003
+    },
+    {
+      "model": "lightgcn",
+      "auc_random_mean": 0.9886903958661009,
+      "auc_random_sd": 0.00107226295224184,
+      "auc_matched_mean": 0.8811026863120983,
+      "auc_matched_sd": 0.0055672344311230165,
+      "auprc_random_mean": 0.990964417332869,
+      "auprc_matched_mean": 0.8689558468495052
+    },
+    {
+      "model": "graphban",
+      "auc_random_mean": 0.9971220088963738,
+      "auc_random_sd": 0.00029416427927340884,
+      "auc_matched_mean": 0.9272466440342194,
+      "auc_matched_sd": 0.01225722267223629,
+      "auprc_random_mean": 0.9974715875432683,
+      "auprc_matched_mean": 0.9423161109564496
+    }
+  ]
+}
