@@ -1,0 +1,106 @@
+name: graphban-s6-five-seed-completion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/graphban_s6_extend_5seeds.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  extend-and-panel:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' pandas scipy scikit-learn requests
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1
+      - name: Recover frozen S6 feature artifacts from original parallel run
+        run: |
+          mkdir -p feature_artifacts/protein feature_artifacts/drug feature_artifacts/combined external_data
+          for i in 0 1 2 3 4 5 6 7; do
+            gh run download 34741559158 -n protein-$i -D feature_artifacts/protein
+          done
+          gh run download 34741559158 -n drug-features -D feature_artifacts/drug
+      - name: Combine canonical protein features
+        run: |
+          N=$(python - <<'PY'
+          import pandas as pd
+          x=pd.read_csv('results/graphban_targetdecagon_mapping_gene_map.csv',dtype=str).fillna('')
+          x=x[x.sequence.astype(bool)].drop_duplicates('gene')
+          print(len(x))
+          PY
+          )
+          python analysis/combine_graphban_features.py \
+            --chunks feature_artifacts/protein/protein_chunk_*.npz \
+            --n-rows "$N" --out feature_artifacts/combined/protein_features.npy
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+      - name: Run unchanged GraphBAN S6 for prespecified additional seeds 3 and 4
+        env:
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python analysis/run_graphban_targetdecagon_precomputed.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --drug-features feature_artifacts/drug/drug_features.npy \
+            --protein-features feature_artifacts/combined/protein_features.npy \
+            --out-prefix results/graphban_targetdecagon_clean_extension \
+            --seeds 3,4
+      - name: Assemble five-seed GraphBAN replicate file
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          a=pd.read_csv('results/graphban_targetdecagon_clean_replicates.csv')
+          b=pd.read_csv('results/graphban_targetdecagon_clean_extension_replicates.csv')
+          x=pd.concat([a,b],ignore_index=True).sort_values('seed')
+          assert x.seed.tolist()==[0,1,2,3,4], x.seed.tolist()
+          x.to_csv('results/graphban_targetdecagon_clean_5seed_replicates.csv',index=False)
+          print(x)
+          PY
+      - name: Run fair four-model panel on all five seeds
+        run: |
+          python analysis/run_dti_fair_model_selection_panel.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --graphban-replicates results/graphban_targetdecagon_clean_5seed_replicates.csv \
+            --out-prefix results/dti_fair_model_selection_panel_5seed \
+            --seeds 0,1,2,3,4
+          cat results/dti_fair_model_selection_panel_5seed.md
+      - name: Commit five-seed completion
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/graphban_targetdecagon_clean_extension_replicates.csv \
+                  results/graphban_targetdecagon_clean_extension_summary.json \
+                  results/graphban_targetdecagon_clean_extension.md \
+                  results/graphban_targetdecagon_clean_5seed_replicates.csv \
+                  results/dti_fair_model_selection_panel_5seed_replicates.csv \
+                  results/dti_fair_model_selection_panel_5seed_model_table.csv \
+                  results/dti_fair_model_selection_panel_5seed_summary.json \
+                  results/dti_fair_model_selection_panel_5seed.md
+          git commit -m 'Complete frozen five-seed GraphBAN and fair DTI panel [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
