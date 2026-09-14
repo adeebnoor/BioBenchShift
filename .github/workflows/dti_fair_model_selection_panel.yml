@@ -1,0 +1,58 @@
+name: dti-fair-model-selection-panel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analysis/run_dti_fair_model_selection_panel.py'
+      - '.github/workflows/dti_fair_model_selection_panel.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  panel:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' pandas scipy scikit-learn
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          mkdir -p external_data results
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+      - name: Run fair full panel
+        run: |
+          python analysis/run_dti_fair_model_selection_panel.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --graphban-replicates results/graphban_targetdecagon_clean_replicates.csv \
+            --out-prefix results/dti_fair_model_selection_panel \
+            --seeds 0,1,2
+          cat results/dti_fair_model_selection_panel.md
+      - name: Commit frozen fair-panel result
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/dti_fair_model_selection_panel_replicates.csv \
+                  results/dti_fair_model_selection_panel_model_table.csv \
+                  results/dti_fair_model_selection_panel_summary.json \
+                  results/dti_fair_model_selection_panel.md
+          git commit -m 'Freeze fair full DTI model-selection panel [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
