@@ -1,89 +1,71 @@
 # BioBenchShift
 
-## Benchmark design redirects biomedical discovery
+## Benchmark design can reshape biomedical hypothesis prioritization
 
 [![Scientific Integrity CI](https://github.com/adeebnoor/BioBenchShift/actions/workflows/ci.yml/badge.svg)](https://github.com/adeebnoor/BioBenchShift/actions/workflows/ci.yml)
 
-**BioBenchShift is the companion reproducibility repository for the manuscript _Benchmark design redirects biomedical discovery_.**
+BioBenchShift is the companion reproducibility repository for a study of how biomedical benchmark controls can affect model selection and computational hypothesis prioritization. The contribution is conditional: changing the control population can change the selected model and its ranked hypotheses, but this does not occur under every matching rule or model menu.
 
-Biomedical AI benchmarks do more than measure models: they can change which model wins, which biological hypotheses are prioritized, and which hypotheses reach the front of the experimental queue.
+> benchmark control definition -> selected model -> ranked hypotheses -> later recorded evidence
 
-> **benchmark construction → model selection → hypothesis identity → later / independent evidence**
+This repository does not establish that these rankings were used to choose actual laboratory experiments, that an algorithm is generally superior, or that later database additions measure unbiased discovery yield.
 
-### Main findings
+## Evidence and boundaries
 
-- Structural observability alone strongly separates observed relations from randomly sampled unknown relations across drug–target, protein–protein, compound–disease and disease–gene benchmarks, and largely collapses after structural neutralization.
-- Benchmark construction changes model ranking in drug–target and historical protein-interaction analyses.
-- Stability-controlled selected-model ensembles disagree on **100% of DTI top-100** and **99% of PPI top-100** hypotheses, far beyond within-model initialization variability.
-- On the same frozen **70,041,100-pair** historical BioGRID candidate universe, the structure-neutralized-selected model recovers **522** of **5,635** later-added interactions in its top 50,000 predictions, compared with **181** for the conventional winner.
-- In independent ChEMBL 37 evidence, support is more concentrated among the earliest drug–target priorities selected after structural neutralization; the broad-cutoff crossover is retained as an explicit boundary rather than hidden.
-- A prespecified leakage-free GraphBAN-style challenge with ChemBERTa and ESM-1b features retained high absolute performance while remaining benchmark-sensitive: AUROC **0.9972 → 0.9278** and AUPRC **0.9976 → 0.9425** after structural neutralization.
+- Endpoint degree alone discriminated observed from randomly sampled unknown pairs across four relation families. Degree matching reduced that signal. In DTI, AUROC remained 0.620 rather than reaching chance; the other three reported matched AUROCs were 0.513, 0.519 and 0.513.
+- The original log2 degree-bin control changed the selected model within the SVD/NeuralMF/LightGCN comparisons in DTI and historical PPI. In the DTI matching-rule sensitivity, log2 matching reversed the winner in 7/10 split seeds, whereas degree-decile and caliper matching did not reverse it in those ten seeds.
+- For the original SVD-versus-NeuralMF contrasts, independently initialized ensembles differed on 100% of DTI top-100 and 99% of PPI top-100 hypotheses. These values must not be attributed to a GraphBAN-versus-NeuralMF comparison or a different candidate universe.
+- On the same 70,041,100-pair historical BioGRID candidate universe, SVD recovered 522 of 5,635 later-added interactions within its top 50,000, compared with 181 for NeuralMF. Later curation, historical degree and assay visibility constrain the biological interpretation; a popularity-matched temporal null is a separate analysis, not already established by these hit counts.
+- The completed fair four-model comparison across five split seeds retained GraphBAN as the mean-AUROC winner under both control definitions: 0.997122 conventionally and 0.927247 after log2 matching. GraphBAN won under both rules in four seeds; the remaining seed selected NeuralMF conventionally and SVD after matching. There was no aggregate winner reversal in this expanded panel.
+- On the common 1,005,757-pair mapped DTI universe, the sequential and parallel GraphBAN ChEMBL follow-through executions differed numerically. Both outputs remain visible. Neither provides a benchmark-induced model switch because the aggregate selector chose GraphBAN under both rules.
+
+A small difference in average AUROC is not, by itself, evidence of statistical equivalence. Neither the original queue-turnover values nor the aggregate score tables establish disjoint queues between GraphBAN and NeuralMF. That proposed secondary comparison requires identity-aligned candidate predictions and evaluation predictions from the corresponding fitted models. Full-history ranking artifacts must not be relabelled as the five held-out split fits.
+
+## Immutable evidence states
+
+| State | Commit |
+|---|---|
+| Baseline analyses | `1298e4c83ff4fa488a784d52219d20e706118a9e` |
+| Additional matching, case and biological-program analyses | `d58c816ccbe30226247087009ff0d22ef44c608a` |
+| Completed modern-model panel and both ChEMBL executions | `66b5c050739bf912f531f0de354925824122eedc` |
+
+The expansion and main branches are separate evidence lineages. A branch name is not an immutable archive. Documentation updates do not alter the frozen results above.
 
 ## Repository layout
 
-```text
-BioBenchShift/
-├── analysis/       # executable analyses used in the study
-├── figures/        # figure source data and reproducibly generated figures
-├── results/        # frozen seed-level and summary outputs
-├── protocols/      # prespecified analyses, amendments, checksums and provenance
-├── CITATION.cff
-├── DATA_PROVENANCE.md
-├── REPRODUCIBILITY.md
-├── requirements.txt
-└── LICENSE
-```
+- `analysis/`: executable analysis scripts.
+- `results/`: frozen replicate-level and summary outputs.
+- `figures/`: figure files and source data; use the source and evidence lineage appropriate to the manuscript version.
+- `protocols/`: analysis specifications, amendments, checksums and provenance.
+- `REPRODUCIBILITY.md` and `DATA_PROVENANCE.md`: commands, inputs, resource releases and interpretation boundaries.
 
-Submission correspondence, reviewer suggestions and journal-system metadata are intentionally **not** part of the public reproducibility repository.
+## Reproduction entry points
 
-## Quick start
+| Analysis | Script or output |
+|---|---|
+| Structural-only audits | `analysis/run_biosnap_dti_gate1.py`, `analysis/run_huri_ppi_gate1.py`, `analysis/run_hetionet_ctd_gate1.py`, `analysis/run_hetionet_bipartite_gate1.py` |
+| Baseline models | `analysis/run_biosnap_dti_gate2_models.py`, `analysis/run_hetionet_gate2_models.py`, `analysis/run_lightgcn_gate2.py` |
+| Original hypothesis-identity controls | `analysis/run_h5_ensemble_confirmatory.py`, `analysis/run_biogrid_h5_identity.py` |
+| BioGRID later-evidence results | `analysis/run_biogrid_future_yield.py`, `analysis/run_biogrid_future_uncertainty.py` |
+| Feature-rich model challenge | `analysis/run_graphban_targetdecagon_clean.py`, `analysis/run_graphban_targetdecagon_precomputed.py` |
+| Completed fair comparison | `results/dti_fair_model_selection_panel_5seed_replicates.csv`, `results/dti_fair_model_selection_panel_5seed_summary.json` |
+| Both ChEMBL executions | `results/graphban_chembl_followthrough_primary_table.csv`, `results/graphban_chembl_followthrough_parallel_primary_table.csv` |
 
-```bash
-git clone https://github.com/adeebnoor/BioBenchShift.git
-cd BioBenchShift
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python analysis/build_science_figures.py
-```
-
-The command above rebuilds the four manuscript figures from `figures/source_data_main.csv`. The full analysis ladder uses external public datasets and, for the contemporary GraphBAN robustness analysis, an additional environment documented in `requirements-graphban.txt`.
-
-## Reproduce the headline evidence
-
-| Scientific question | Primary script | Frozen output |
-|---|---|---|
-| Does structural observability inflate conventional evaluation? | `analysis/run_biosnap_dti_gate1.py`, `analysis/run_huri_ppi_gate1.py`, `analysis/run_hetionet_ctd_gate1.py`, `analysis/run_hetionet_bipartite_gate1.py` | `results/*gate1*` |
-| Do learned-model rankings change? | `analysis/run_biosnap_dti_gate2_models.py`, `analysis/run_hetionet_gate2_models.py`, `analysis/run_lightgcn_gate2.py` | `results/*gate2*`, `results/*lightgcn*` |
-| Does benchmark-induced model selection change hypothesis identity? | `analysis/run_h5_ensemble_confirmatory.py`, `analysis/run_biogrid_h5_identity.py` | `results/h5b_*`, `results/h5c_*` |
-| Do selected models differ on later evidence? | `analysis/run_biogrid_future_yield.py`, `analysis/run_biogrid_future_uncertainty.py` | `results/h4b_*`, `results/h4c_*` |
-| Does the pattern transfer to an independent DTI evidence source? | `analysis/run_chembl_dti_external.py` | `results/h6_chembl_*` |
-| Does the conclusion survive a contemporary architecture challenge? | `analysis/run_graphban_targetdecagon_clean.py`, `analysis/run_graphban_targetdecagon_precomputed.py` | `results/graphban_targetdecagon_clean*` |
-
-For exact release identifiers, hashes, expected outputs, and commands, see [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) and [`DATA_PROVENANCE.md`](DATA_PROVENANCE.md).
+The fair-panel script imports saved GraphBAN metrics; it does not train GraphBAN or preserve its per-pair predictions. A complete score-export replay therefore needs both model-training entry points, not a four-line addition to the fair-panel summary writer alone.
 
 ## Reproducibility policy
 
-1. **Protocols are frozen before outcome inspection.** Amendments are timestamped and retained.
-2. **Negative and boundary results remain visible.** Disease–gene instability, the ChEMBL broad-cutoff crossover, and incomplete Anti-DDI overlap balance are not removed from the record.
-3. **External evidence is not used for model selection.** BioGRID later-release evidence and ChEMBL 37 evidence are opened only after the relevant model-selection rule is fixed.
-4. **Third-party datasets are not silently repackaged.** Release identifiers and checksums are provided where redistribution is restricted or unnecessary.
-5. **The same candidate universe is used when testing hypothesis identity.** Only the benchmark rule used to select the model changes.
+1. Retain frozen protocols and distinguish later, secondary analysis plans from original prospective specifications.
+2. Keep negative, incomplete-balance and execution-sensitive results visible.
+3. Keep external evidence separate from the original model-selection rule.
+4. Record candidate identity, mapping, training split, model-fit identity, software environment and prediction-file hashes when comparing queues.
+5. Do not infer statistical equivalence from a nonsignificant difference or from overlapping split variation.
+6. Do not claim submission readiness, independent validation or prospective discovery yield from a passing software check alone.
 
-## Scope and boundaries
+The independent [ANTI-DDI](https://github.com/adeebnoor/ANTI-DDI) repository remains the resource of record for Anti-DDI. It is used here only in a secondary evidence-state sensitivity analysis. Submission correspondence and reviewer suggestions are not part of this public repository.
 
-BioBenchShift does **not** claim that degree bias is newly discovered, that biomedical AI generally learns no biology, that structural neutralization is universally optimal, that one model family is universally superior, or that later database additions are unbiased biological truth. The tested contribution is narrower and falsifiable: **benchmark design can operate upstream of biomedical discovery by changing model selection and the identity of the hypotheses prioritized for follow-up.**
+## Citation and license
 
-The independent [`ANTI-DDI`](https://github.com/adeebnoor/ANTI-DDI) repository remains the resource of record for Anti-DDI v3.0.1. BioBenchShift uses that resource only for a supportive evidence-state sensitivity analysis; the principal evidence in this repository is the cross-domain benchmark, hypothesis-identity, temporal BioGRID, independent ChEMBL, and leakage-free contemporary-model analyses.
+Until an archival release and article DOI are available, cite the exact repository commit used. `CITATION.cff` and `.zenodo.json` provide machine-readable metadata; consult the immutable evidence state appropriate to the analysis.
 
-## Status
-
-All prespecified submission-completion gates are closed. The cross-domain structural audits, learned-model comparisons, stability-controlled hypothesis-identity analyses, BioGRID temporal and uncertainty analyses, ChEMBL external evidence, evidence-state boundary analysis, and leakage-free contemporary GraphBAN-style challenge are frozen for submission.
-
-## Citation
-
-Until an archival release and article DOI are available, cite the exact repository commit used. `CITATION.cff` and `.zenodo.json` provide machine-readable metadata.
-
-## License
-
-Original BioBenchShift code is MIT-licensed. Original documentation, figure source data, and frozen outputs are CC BY 4.0 unless a file states otherwise. Third-party datasets and identifiers remain subject to their original terms; see `DATA_PROVENANCE.md`.
+Original code is MIT-licensed. Original documentation, figure source data and frozen outputs are CC BY 4.0 unless otherwise stated. Third-party resources retain their original terms; see `DATA_PROVENANCE.md`.
