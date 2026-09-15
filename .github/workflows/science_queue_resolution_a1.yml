@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/science_queue_resolution_a1.yml'
       - 'analysis/run_science_queue_resolution_a1.py'
+      - 'analysis/run_science_queue_resolution_a1_replay.py'
   workflow_dispatch:
 
 permissions:
@@ -62,7 +63,7 @@ jobs:
           sha256sum external_data/ChG-TargetDecagon_targets.csv.gz
       - name: Run same-fit A1 and A2 replay
         run: |
-          python analysis/run_science_queue_resolution_a1.py \
+          python analysis/run_science_queue_resolution_a1_replay.py \
             --input external_data/ChG-TargetDecagon_targets.csv.gz \
             --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
             --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
@@ -83,6 +84,7 @@ jobs:
             results/science_queue_resolution_a1_evaluation_metrics.csv
             results/science_queue_resolution_a1_pairwise_resolution.csv
             results/science_queue_resolution_a1_split_provenance.csv
+            results/science_queue_resolution_a1_frozen_vs_replay.csv
             results/science_queue_resolution_a1_top1000_identities.csv.gz
             results/science_queue_resolution_a1_A2_resolution.png
           if-no-files-found: error
@@ -96,7 +98,8 @@ jobs:
                   results/science_queue_resolution_a1_evaluation_metrics.csv \
                   results/science_queue_resolution_a1_pairwise_resolution.csv \
                   results/science_queue_resolution_a1_split_provenance.csv \
+                  results/science_queue_resolution_a1_frozen_vs_replay.csv \
                   results/science_queue_resolution_a1_top1000_identities.csv.gz \
                   results/science_queue_resolution_a1_A2_resolution.png
-          git commit -m 'Freeze Science A1/A2 same-fit queue-resolution results [skip ci]'
+          git commit -m 'Freeze Science A1/A2 replay queue-resolution results [skip ci]'
           git push origin HEAD:science-a1-20260915
