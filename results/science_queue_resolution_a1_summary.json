@@ -1,0 +1,108 @@
+{
+  "protocol": "BioBenchShift-Science-A1-A2-secondary-20260915-v2-replay",
+  "analysis_status": "completed_secondary_replay",
+  "frozen_comparison_status": "distinct_replay_execution",
+  "candidate_universe_size": 1005757,
+  "candidate_universe_hash": "295b7f5d120188f65fc17169f72eeafd25a2e7368ccece8c43dec223dc162863",
+  "nominated_pair": [
+    "graphban",
+    "neuralmf"
+  ],
+  "nominated_pair_was_chosen_after_existing_auroc_table": true,
+  "graphban_neuralmf": {
+    "per_seed": [
+      {
+        "seed": 0,
+        "ht100": 1.0,
+        "ht500": 0.996,
+        "ht1000": 0.903,
+        "abs_delta_auroc_random": 0.001293173756447663,
+        "abs_delta_auroc_matched": 0.04055612394488539
+      },
+      {
+        "seed": 1,
+        "ht100": 1.0,
+        "ht500": 0.844,
+        "ht1000": 0.815,
+        "abs_delta_auroc_random": 0.0006157746522420515,
+        "abs_delta_auroc_matched": 0.05232130269558388
+      },
+      {
+        "seed": 2,
+        "ht100": 1.0,
+        "ht500": 0.994,
+        "ht1000": 0.881,
+        "abs_delta_auroc_random": 0.0005180714993298086,
+        "abs_delta_auroc_matched": 0.026037679626379928
+      },
+      {
+        "seed": 3,
+        "ht100": 1.0,
+        "ht500": 0.984,
+        "ht1000": 0.844,
+        "abs_delta_auroc_random": 0.0002783795961324165,
+        "abs_delta_auroc_matched": 0.03521060053684699
+      },
+      {
+        "seed": 4,
+        "ht100": 1.0,
+        "ht500": 0.998,
+        "ht1000": 0.876,
+        "abs_delta_auroc_random": 0.0019872968984397943,
+        "abs_delta_auroc_matched": 0.006938126568481473
+      }
+    ],
+    "mean_ht100": 1.0,
+    "mean_ht500": 0.9632,
+    "mean_ht1000": 0.8638,
+    "random_mean_abs_delta_auroc": 0.0009385392805183468,
+    "matched_mean_abs_delta_auroc": 0.03221276667443553,
+    "random_delta_range": [
+      0.0002783795961324165,
+      0.0019872968984397943
+    ],
+    "matched_delta_range": [
+      0.006938126568481473,
+      0.05232130269558388
+    ]
+  },
+  "fidelity_by_model": [
+    {
+      "model": "graphban",
+      "mean": 0.008098042820435492,
+      "max": 0.0390096468813671
+    },
+    {
+      "model": "lightgcn",
+      "mean": 7.771561172376095e-17,
+      "max": 2.220446049250313e-16
+    },
+    {
+      "model": "neuralmf",
+      "mean": 4.4408920985006264e-17,
+      "max": 1.1102230246251565e-16
+    },
+    {
+      "model": "svd",
+      "mean": 3.3306690738754695e-17,
+      "max": 1.1102230246251565e-16
+    }
+  ],
+  "interpretation_boundary": "Queue turnover and AUROC gaps are paired within this replay execution. The frozen GraphBAN AUROCs are not substituted into the replay. A small AUROC gap is descriptive and not an equivalence test.",
+  "software": {
+    "python": "3.11.16",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "torch": "2.3.1+cpu",
+    "device": "cpu",
+    "torch_threads": 4
+  },
+  "input_hashes": {
+    "targetdecagon": "fb4867f90dd8b26383689c9ebce77cd2746475c585a3dff87de83bf0954c69db",
+    "drug_map": "bf307ca8ea36bd6588b246acd2e7326d4b4c4c72101a3b3c6932b6e8ef5df21e",
+    "gene_map": "cbe476480b37389ee78ae20d0184081bfee2a85936a756bd699417f5605da714",
+    "drug_features": "87ac56d7760efcaf7375598a4cda9135bbdb18f7a435e8f5e2c0f2aac1f86fd5",
+    "protein_features": "e83537d2d00585f6e960f90a2e89ab5a8a40c51fda80b699c4661ef101026a81",
+    "frozen_panel": "7f77224280afc8d787029bb937d4db8410225bbea3dc832ef2f9a8c947762a88"
+  }
+}
