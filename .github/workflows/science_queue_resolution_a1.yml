@@ -1,0 +1,102 @@
+name: science-queue-resolution-a1
+
+on:
+  push:
+    branches: [science-a1-20260915]
+    paths:
+      - '.github/workflows/science_queue_resolution_a1.yml'
+      - 'analysis/run_science_queue_resolution_a1.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  a1-a2:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: '4'
+      MKL_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen model environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' pandas scipy scikit-learn matplotlib
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1
+          python -m pip install torch-geometric==2.6.1
+      - name: Recover frozen ChemBERTa and ESM feature artifacts
+        run: |
+          mkdir -p feature_artifacts/protein feature_artifacts/drug feature_artifacts/combined external_data results
+          for i in 0 1 2 3 4 5 6 7; do
+            gh run download 34741559158 -n protein-$i -D feature_artifacts/protein
+          done
+          gh run download 34741559158 -n drug-features -D feature_artifacts/drug
+      - name: Combine canonical protein features
+        run: |
+          N=$(python - <<'PY'
+          import pandas as pd
+          x=pd.read_csv('results/graphban_targetdecagon_mapping_gene_map.csv',dtype=str).fillna('')
+          x=x[x.sequence.astype(bool)].drop_duplicates('gene')
+          print(len(x))
+          PY
+          )
+          python analysis/combine_graphban_features.py \
+            --chunks feature_artifacts/protein/protein_chunk_*.npz \
+            --n-rows "$N" \
+            --out feature_artifacts/combined/protein_features.npy
+      - name: Acquire frozen TargetDecagon input
+        run: |
+          curl -fL --retry 4 --retry-delay 2 \
+            https://snap.stanford.edu/biodata/datasets/10015/files/ChG-TargetDecagon_targets.csv.gz \
+            -o external_data/ChG-TargetDecagon_targets.csv.gz
+          sha256sum external_data/ChG-TargetDecagon_targets.csv.gz
+      - name: Run same-fit A1 and A2 replay
+        run: |
+          python analysis/run_science_queue_resolution_a1.py \
+            --input external_data/ChG-TargetDecagon_targets.csv.gz \
+            --drug-map results/graphban_targetdecagon_mapping_drug_map.csv \
+            --gene-map results/graphban_targetdecagon_mapping_gene_map.csv \
+            --drug-features feature_artifacts/drug/drug_features.npy \
+            --protein-features feature_artifacts/combined/protein_features.npy \
+            --expected-panel results/dti_fair_model_selection_panel_5seed_replicates.csv \
+            --out-prefix results/science_queue_resolution_a1 \
+            --seeds 0,1,2,3,4
+          cat results/science_queue_resolution_a1.md
+          cat results/science_queue_resolution_a1_summary.json
+      - name: Upload complete A1/A2 result bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: science-queue-resolution-a1
+          path: |
+            results/science_queue_resolution_a1.md
+            results/science_queue_resolution_a1_summary.json
+            results/science_queue_resolution_a1_evaluation_metrics.csv
+            results/science_queue_resolution_a1_pairwise_resolution.csv
+            results/science_queue_resolution_a1_split_provenance.csv
+            results/science_queue_resolution_a1_top1000_identities.csv.gz
+            results/science_queue_resolution_a1_A2_resolution.png
+          if-no-files-found: error
+          retention-days: 30
+      - name: Freeze compact secondary-analysis outputs on branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/science_queue_resolution_a1.md \
+                  results/science_queue_resolution_a1_summary.json \
+                  results/science_queue_resolution_a1_evaluation_metrics.csv \
+                  results/science_queue_resolution_a1_pairwise_resolution.csv \
+                  results/science_queue_resolution_a1_split_provenance.csv \
+                  results/science_queue_resolution_a1_top1000_identities.csv.gz \
+                  results/science_queue_resolution_a1_A2_resolution.png
+          git commit -m 'Freeze Science A1/A2 same-fit queue-resolution results [skip ci]'
+          git push origin HEAD:science-a1-20260915
